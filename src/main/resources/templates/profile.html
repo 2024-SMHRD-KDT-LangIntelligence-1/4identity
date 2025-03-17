@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 - 4Identity</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .interest-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .interest-option {
+            position: relative;
+            width: calc(50% - 5px);
+            margin-bottom: 10px;
+        }
+        
+        .interest-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .interest-option label {
+            display: block;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .interest-option input[type="radio"]:checked + label {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .interest-option input[type="radio"]:focus + label {
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .userid-display {
+            background-color: #f0f0f0;
+            padding: 12px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- 왼쪽 사이트 로고와 이름 -->
+            <div class="navbar-logo">
+                <a href="/">4Identity</a>
+            </div>
+            
+            <!-- 오른쪽 버튼 -->
+            <div class="navbar-auth">
+                <button onclick="location.href='/'" class="auth-btn">홈으로</button>
+                <button id="logoutBtn" class="auth-btn">로그아웃</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="container">
+        <div class="profile-container">
+            <h1>내 정보 수정</h1>
+            
+            <form id="profileForm" action="/profile" method="post">
+                <div class="form-group">
+                    <label for="userid">아이디</label>
+                    <div class="userid-display" th:text="${member.userid}"></div>
+                    <input type="hidden" id="userid" name="userid" th:value="${member.userid}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="passwd">비밀번호</label>
+                    <input type="password" id="passwd" name="passwd" th:value="${member.passwd}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" name="email" th:value="${member.email}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>관심사</label>
+                    <div class="interest-container">
+                        <div class="interest-option">
+                            <input type="radio" id="interest1" name="interest" value="산업 및 트렌드" th:checked="${member.interest == '산업 및 트렌드'}">
+                            <label for="interest1">산업 및 트렌드</label>
+                        </div>
+                        <div class="interest-option">
+                            <input type="radio" id="interest2" name="interest" value="소비자 기술 및 제품 리뷰" th:checked="${member.interest == '소비자 기술 및 제품 리뷰'}">
+                            <label for="interest2">소비자 기술 및 제품 리뷰</label>
+                        </div>
+                        <div class="interest-option">
+                            <input type="radio" id="interest3" name="interest" value="정책 및 법률" th:checked="${member.interest == '정책 및 법률'}">
+                            <label for="interest3">정책 및 법률</label>
+                        </div>
+                        <div class="interest-option">
+                            <input type="radio" id="interest4" name="interest" value="기업 및 브랜드" th:checked="${member.interest == '기업 및 브랜드'}">
+                            <label for="interest4">기업 및 브랜드</label>
+                        </div>
+                        <div class="interest-option">
+                            <input type="radio" id="interest5" name="interest" value="미래 기술 및 혁신" th:checked="${member.interest == '미래 기술 및 혁신'}">
+                            <label for="interest5">미래 기술 및 혁신</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">정보 수정</button>
+            </form>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 성공 메시지가 있는지 확인하고 표시
+            const successMessage = "[[${session.successMessage}]]";
+            if (successMessage && successMessage.trim() !== '""') {
+                const message = successMessage.replace(/"/g, '');
+                alert(message);
+                // 알림창 확인 후 메인 페이지로 이동
+                window.location.href = '/';
+                
+                // 세션에서 메시지 제거
+                fetch('/api/clearSessionMessage', {
+                    method: 'POST'
+                });
+            }
+            
+            // 폼 제출 전 유효성 검사
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                const passwd = document.getElementById('passwd').value;
+                const email = document.getElementById('email').value;
+                const interestSelected = document.querySelector('input[name="interest"]:checked');
+                
+                if (!passwd || !email) {
+                    e.preventDefault();
+                    alert('비밀번호와 이메일은 필수 입력 항목입니다.');
+                }
+                
+                if (!interestSelected) {
+                    e.preventDefault();
+                    alert('관심사를 선택해주세요.');
+                }
+            });
+            
+            // 로그아웃 버튼 클릭 시
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                fetch('/api/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        window.location.href = '/';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</body>
+</html>

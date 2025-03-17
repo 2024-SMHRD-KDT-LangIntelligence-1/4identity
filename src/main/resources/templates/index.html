@@ -4,29 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4Identity Project</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 100px;
-        }
-        h1 {
-            color: #333;
-        }
-        img {
-            width: 80%;
-            max_width: 600px;
-            border: 1px solid #ddd;
-            border-radius:10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/main.js}" defer></script>
 </head>
 <body>
-    <div>
-        <h1 th:text="${message}">Default Message</h1>
-        <img th:src="${imageUrl}" alt="News Image">
-    </div>
+    <!-- 상단 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- 왼쪽 사이트 로고와 이름 -->
+            <div class="navbar-logo">
+                <a href="/">4Identity</a>
+            </div>
+            
+            <!-- 오른쪽 로그인/로그아웃 버튼 -->
+            <div class="navbar-auth">
+                <!-- 비로그인 상태일 때 표시 -->
+                <div id="guestNav" th:style="${session.loginMember != null ? 'display: none;' : ''}">
+                    <button id="loginBtn" onclick="location.href='/login'" class="auth-btn">Login</button>
+                    <button id="signupBtn" onclick="location.href='/signup'" class="auth-btn signup-btn">Sign up</button>
+                </div>
+                
+                <!-- 로그인 상태일 때 표시 -->
+                <div id="userNav" th:style="${session.loginMember != null ? '' : 'display: none;'}">
+                    <button id="profileBtn" onclick="location.href='/profile'" class="auth-btn">내 정보</button>
+                    <form action="/logout" method="post" style="display: inline;">
+                        <button type="submit" id="logoutBtn" class="auth-btn">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="container">
+        <h1>Welcome to 4Identity</h1>
+        <p>Clean and modern web design with a light green theme.</p>
+        
+        <!-- 로그인 환영 메시지 -->
+        <div th:if="${session.loginMember != null}" class="welcome-message">
+            <p>환영합니다, <span th:text="${session.loginMember.userid}"></span>님!</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 이전 모달 관련 코드 삭제 (로그인 페이지를 사용함)
+            
+            // 로그아웃 버튼은 이제 form 제출 방식으로 동작하므로 이벤트 핸들러 불필요
+        });
+    </script>
 </body>
 </html>
