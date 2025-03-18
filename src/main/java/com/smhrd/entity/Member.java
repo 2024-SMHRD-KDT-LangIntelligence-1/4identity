@@ -24,13 +24,13 @@ public class Member {
     private Long id;
     
     @Column(unique = true, nullable = false)
-    private String userid; // memberId에서 userid로 변경
+    private String userid;
     
     @Column(nullable = false)
-    private String passwd; // password에서 passwd로 변경
+    private String passwd;
     
     @Column(nullable = false)
     private String email;
     
-    private String interest; // interests에서 interest로 변경
+    private String interest;
 }
