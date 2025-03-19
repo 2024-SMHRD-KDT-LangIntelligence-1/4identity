@@ -24,6 +24,7 @@ public class MemberController {
         return "signup";
     }
 
+    
     // 회원가입 처리
     @PostMapping("/signup")
     public String signup(Member member, HttpSession session) {
