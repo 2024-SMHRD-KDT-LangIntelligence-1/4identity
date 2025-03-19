@@ -38,7 +38,7 @@
     <!-- 메인 콘텐츠 영역 -->
     <main class="container">
         <h1>Welcome to 4Identity</h1>
-        
+        <div> test </div>
         <!-- 로그인 환영 메시지 -->
         <div th:if="${session.loginMember != null}" class="welcome-message">
             <p>환영합니다, <span th:text="${session.loginMember.userid}"></span>님!</p>
