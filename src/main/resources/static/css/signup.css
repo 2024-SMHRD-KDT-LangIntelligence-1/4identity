@@ -1,0 +1,54 @@
+.interest-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.interest-option {
+    position: relative;
+    width: calc(50% - 5px);
+    margin-bottom: 10px;
+}
+
+.interest-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.interest-option label {
+    display: block;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.interest-option input[type="radio"]:checked + label {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+.interest-option input[type="radio"]:focus + label {
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+.signup-container {
+    width: 450px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
