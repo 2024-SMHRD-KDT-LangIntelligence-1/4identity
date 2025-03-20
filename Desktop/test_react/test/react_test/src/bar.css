@@ -1,0 +1,17 @@
+header {
+    overflow: hidden;
+    height: 50px;
+    background-color: #263A29;  
+  }
+  
+  ul {
+    list-style: none;
+    color: white;
+    font-family: 'Pretendard-Regular';
+  }
+  
+  li {
+    width: 15%;
+    float: left;
+    text-align: center;
+  }
