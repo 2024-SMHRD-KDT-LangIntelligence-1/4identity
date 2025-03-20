@@ -5,62 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - 4Identity</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <style>
-        .interest-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .interest-option {
-            position: relative;
-            width: calc(50% - 5px);
-            margin-bottom: 10px;
-        }
-        
-        .interest-option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .interest-option label {
-            display: block;
-            padding: 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .interest-option input[type="radio"]:checked + label {
-            background-color: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-        
-        .interest-option input[type="radio"]:focus + label {
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
-        }
-        
-        .signup-container {
-            width: 450px;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/signup.css">
 </head>
 <body>
     <!-- 상단 네비게이션 바 -->
@@ -91,7 +36,7 @@
                 <div class="form-group">
                     <label for="userid">아이디</label>
                     <input type="text" id="userid" name="userid" required placeholder="아이디를 입력해주세요.">
-                    <div>중복확인</div>
+                    <button id="userIdBtn">중복확인</button>
                 </div>
                 
                 <div class="form-group">
@@ -106,8 +51,7 @@
                 
                 <div class="form-group">
                     <label for="email">이메일</label>
-                    <input type="email" id="email" name="email" required>
-                    <div></div>
+                    <input type="email" id="email" name="email" required placeholder="이메일을 입력해주세요">
                 </div>
                 
                 <div class="form-group">
@@ -144,37 +88,6 @@
         </div>
     </main>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 폼 제출 전 유효성 검사
-            document.getElementById('signupForm').addEventListener('submit', function(e) {
-                const userid = document.getElementById('userid').value;
-                const passwd = document.getElementById('passwd').value;
-                const email = document.getElementById('email').value;
-                const interestSelected = document.querySelector('input[name="interest"]:checked');
-                
-                if (!userid || !passwd || !email) {
-                    e.preventDefault();
-                    alert('아이디, 비밀번호, 이메일은 필수 입력 항목입니다.');
-                }
-                
-                if (!interestSelected) {
-                    e.preventDefault();
-                    alert('관심사를 선택해주세요.');
-                }
-            });
-            
-            // 세션에 에러 메시지가 있으면 표시 후 삭제
-            const errorMessage = document.querySelector('.error-message');
-            if (errorMessage && errorMessage.textContent.trim() !== '') {
-                setTimeout(function() {
-                    errorMessage.style.display = 'none';
-                }, 5000);
-                
-                // 서버 세션에서 에러 메시지 삭제 요청
-                fetch('/clearSessionMessage', { method: 'POST' });
-            }
-        });
-    </script>
+    <script src="/js/main.js"> </script>
 </body>
 </html>

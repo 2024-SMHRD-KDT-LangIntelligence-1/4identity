@@ -20,15 +20,15 @@
             <div class="navbar-auth">
                 <!-- 비로그인 상태일 때 표시 -->
                 <div id="guestNav" th:style="${session.loginMember != null ? 'display: none;' : ''}">
-                    <button id="loginBtn" onclick="location.href='/login'" class="auth-btn">Login</button>
-                    <button id="signupBtn" onclick="location.href='/signup'" class="auth-btn signup-btn">Sign up</button>
+                    <button id="loginBtn" onclick="location.href='/login'" class="auth-btn">로그인</button>
+                    <button id="signupBtn" onclick="location.href='/signup'" class="auth-btn signup-btn">회원가입</button>
                 </div>
                 
                 <!-- 로그인 상태일 때 표시 -->
                 <div id="userNav" th:style="${session.loginMember != null ? '' : 'display: none;'}">
                     <button id="profileBtn" onclick="location.href='/profile'" class="auth-btn">내 정보</button>
                     <form action="/logout" method="post" style="display: inline;">
-                        <button type="submit" id="logoutBtn" class="auth-btn">Logout</button>
+                        <button type="submit" id="logoutBtn" class="auth-btn">로그아웃</button>
                     </form>
                 </div>
             </div>
@@ -37,8 +37,9 @@
     
     <!-- 메인 콘텐츠 영역 -->
     <main class="container">
-        <h1>Welcome to 4Identity</h1>
-        <div> test </div>
+
+        <div class="mainBox">  </div>
+
         <!-- 로그인 환영 메시지 -->
         <div th:if="${session.loginMember != null}" class="welcome-message">
             <p>환영합니다, <span th:text="${session.loginMember.userid}"></span>님!</p>
