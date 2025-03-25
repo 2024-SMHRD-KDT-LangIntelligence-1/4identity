@@ -93,11 +93,17 @@ function SignUpPage() {
           ))}
         </div>
         <div className="signUpCategory">
-          <div> 산업 및 트렌드 </div>
-          <div> 소비자 기술·제품 리뷰 </div>
-          <div> 정책 및 법률 </div>
-          <div> 기업 및 브랜드 </div>
-          <div> 미래 기술·혁신 </div>
+          <h4> 어떤 분야에 관심이 있나요?</h4>
+          <p> 관심 있는 분야를 먼저 요약해드릴게요.</p>
+          <div className="categoryNum" id="category1">
+            <div> 산업 및 트렌드 </div>
+            <div> 소비자 기술·제품 리뷰 </div>
+          </div>
+          <div className="categoryNum" id="category2">
+            <div> 정책 및 법률 </div>
+            <div> 기업 및 브랜드 </div>
+            <div> 미래 기술·혁신 </div>
+          </div>
         </div>
 
         <button

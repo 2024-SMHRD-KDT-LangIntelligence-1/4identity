@@ -144,6 +144,17 @@ width: 100%;
 height: 35px
 }
 
-.signUpCategory {
-width: 100px;
+.categoryNum {
+  display: flex;
+}
+
+.categoryNum div {
+  margin: 5px;
+  width: 220px;
+  height: 40px;
+  border: 1px solid #CBCACA;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;   
 }
