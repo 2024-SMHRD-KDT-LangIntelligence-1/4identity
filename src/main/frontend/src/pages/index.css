@@ -1,0 +1,32 @@
+header {
+    height: 51px;
+    background-color: #CFE7D8;
+  }
+  
+  .backGreen {
+    height: 100vh;
+    background: linear-gradient(to bottom, #CFE7D8 50%, white 50%);
+  }
+  
+  .mainNewsBox {
+    flex:1;
+    display:flex;
+    justify-content: center;
+    align-items: center; 
+  }
+  
+  .mainNews{
+    width: 400px;
+    padding: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    border-radius: 17px
+  }
+  
+  main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  

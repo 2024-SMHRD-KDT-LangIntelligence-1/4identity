@@ -92,6 +92,13 @@ function SignUpPage() {
             />
           ))}
         </div>
+        <div className="signUpCategory">
+          <div> 산업 및 트렌드 </div>
+          <div> 소비자 기술·제품 리뷰 </div>
+          <div> 정책 및 법률 </div>
+          <div> 기업 및 브랜드 </div>
+          <div> 미래 기술·혁신 </div>
+        </div>
 
         <button
           className="signUpBtn"
