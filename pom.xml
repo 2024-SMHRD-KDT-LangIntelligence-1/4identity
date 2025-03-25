@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>  <!-- 더 안정적인 최신 버전으로 수정 -->
+		<version>3.4.4</version>  <!-- 더 안정적인 최신 버전으로 수정 -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.smhrd</groupId>
@@ -52,7 +52,6 @@
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
-			 <version>8.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

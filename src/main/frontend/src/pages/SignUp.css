@@ -1,0 +1,144 @@
+.signUpPage {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+.signUpTitle {
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+
+.signBar {
+  width: 300px;
+  color: gray;
+  border: none;
+  height: 1px;
+  background-color: #ddd;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+  
+.inputField {
+  margin-bottom: 30px;
+}
+  
+.inputField label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+  
+.inputField input {
+  width: 95%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+#inputId {
+  width: 93%;
+}
+
+.inputWithButton {
+  display: flex;
+  align-items: center;
+  gap : 8px;
+  width: 100%;
+}
+
+.inputField {
+  flex: 1;
+}
+  
+.checkBtn {
+  white-space: nowrap; /*버튼 줄바꿈 방지*/
+  border: none;
+  padding: 12px 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+  margin-bottom: 5px;
+}
+  
+.checkBtn:hover {
+  color : #fff;
+  background-color: #256433;
+}
+  
+  .emailInput {
+    display: flex;
+    align-items: center;
+  }
+  
+  .emailInput input {
+    flex: 1;
+  }
+  
+  .emailInput select {
+    margin-left: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+/* 반응형 미디어쿼리 */
+@media (max-width: 768px) {
+  .signUpPage {
+    padding: 15px;
+  }
+  
+  .signUpTitle {
+    font-size: 20px;
+  }
+
+  .signUpBtn {
+    margin-top: 10px;
+  }
+  
+  .inputWithButton {
+    flex-direction: column;
+    /* align-items: flex-start; */
+    /* flex-wrap: nowrap; 요소가 한줄에 오도록 */
+  }
+
+  .inputWithButton .inputField {
+    width: 100%;
+  }
+  
+  .checkBtn {
+    width: 100%;
+    margin-bottom: 20px;
+    flex-shrink: 0; 
+  }
+  
+  .inputField input,
+  .emailInput input,
+  .emailInput select {
+    font-size: 12px;
+    height: 20px;
+    margin-bottom: 15px;
+  }
+
+  .inputField {
+    margin-bottom: 5px;
+  }
+
+}
+
+.signUpBtn {
+  background-color: #256433;
+  color : #fff;
+  align-items: center;
+  font-size: 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: 35px
+}
