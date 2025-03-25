@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../components/bar.jsx";
-import "./SignUp.css";
+import "../pages/login.css";
 import { useNavigate } from "react-router-dom";
 
 function LoginPage() {

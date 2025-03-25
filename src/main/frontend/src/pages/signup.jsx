@@ -34,6 +34,12 @@ function SignUpPage() {
 
   const emailDrops = ["naver.com", "gmail.com", "daum.net"];
 
+  const [category, setCategory] = useState(false);
+
+  const handleClick = () => {
+    setCategory(!category);
+  };
+
   return (
     <>
       <Header />
@@ -94,7 +100,10 @@ function SignUpPage() {
         </div>
         <div className="signUpCategory">
           <h4> 어떤 분야에 관심이 있나요?</h4>
-          <p> 관심 있는 분야를 먼저 요약해드릴게요.</p>
+          <p style={{ fontSize: "13px" }}>
+            {" "}
+            관심 있는 분야를 먼저 요약해드릴게요.
+          </p>
           <div className="categoryNum" id="category1">
             <div> 산업 및 트렌드 </div>
             <div> 소비자 기술·제품 리뷰 </div>
