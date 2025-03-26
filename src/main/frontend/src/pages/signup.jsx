@@ -222,7 +222,7 @@ function SignUpPage() {
 
         <div className="signUpCategory">
           <h4> 어떤 분야에 관심이 있나요?</h4>
-          <p style={{ fontSize: "13px" }}>
+          <p style={{ fontSize: "13px", color: "#535151" }}>
             {" "}
             관심 있는 분야를 먼저 요약해드릴게요.
           </p>
