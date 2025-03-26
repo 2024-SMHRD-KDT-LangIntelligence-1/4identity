@@ -1,28 +1,44 @@
 .header {
-  width: 100%;
-  background-color: #CFE7D8;
-  color: white;
   position: fixed;
   top: 0;
-  left: 0;
+  width: 100%;
   z-index: 999;
 }
 
 .headerBox {
-  max-width: 1200px;
-  padding: 16px 0px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px 0px 32px;
   flex-wrap: wrap;
 }
 
 .logo {
-  font-size: 1.5rem;
+  color : #fff;
+  font-size: 22px;
   font-weight: bold;
 }
 
-/* 햄버거 메뉴 */
+.rightSide {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerBtn {
+  display: flex;
+  gap: 8px;
+}
+
+.headerBtn button {
+  background-color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* 반응형 햄버거 */
 .headerHam {
   display: none;
   flex-direction: column;
@@ -38,70 +54,40 @@
 }
 
 .nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
+  margin-top: 0;
+  padding: 0 32px 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
 }
 
 .nav ul {
+  color: dimgray;
   list-style: none;
   display: flex;
   gap: 1.5rem;
-  padding: 0;
-  margin: 0;
-}
-
-.nav ul li {
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.headerBtn {
-  display: flex;
-  gap: 10px;
-  margin-right: 16px;
-}
-
-.headerBtn button {
-  background-color: white;
-  width: 90px;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 7px;
-  cursor: pointer;
-  position: relative;
-  bottom: 4px;
 }
 
 @media (max-width: 768px) {
-  .headerHam {
-    margin-right:15px;
-    display: flex;
-    position: relative;
-    bottom: 4px;
-  }
-
-  .nav {
-    flex-direction: column;
-    width: 100%;
-    background-color: #CFE7D8;
-    padding: 1rem 0;
+  .headerBtn {
     display: none;
   }
 
-  .nav.open {
+  .headerHam {
     display: flex;
+  }
+
+  .nav {
+    display: none;
+    background-color: #CFE7D8;
+    height: 100vh;
+  }
+
+  .nav.open {
+    display: block;
   }
 
   .nav ul {
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .headerBtn {
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1rem;
+    gap: 20px;
+    padding-top: 30px;
   }
 }
