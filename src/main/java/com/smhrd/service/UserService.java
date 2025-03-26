@@ -137,4 +137,69 @@ public class UserService {
             throw new RuntimeException("사용자 정보 업데이트 중 오류가 발생했습니다.", e);
         }
     }
+    
+    /**
+     * 회원 탈퇴
+     * @param userId 사용자 ID
+     * @param userPw 사용자 비밀번호 (확인용)
+     * @return 탈퇴 결과 (true: 성공, false: 실패)
+     */
+    @Transactional
+    public boolean deleteUser(String userId, String userPw) {
+        try {
+            log.debug("회원 탈퇴 시도: {}", userId);
+            
+            // 사용자 존재 확인 및 비밀번호 검증
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                log.debug("회원 탈퇴 실패: 사용자가 존재하지 않음 - {}", userId);
+                return false;
+            }
+            
+            User user = userOptional.get();
+            
+            // 비밀번호 확인
+            if (!user.getUserPw().equals(userPw)) {
+                log.debug("회원 탈퇴 실패: 비밀번호 불일치 - {}", userId);
+                return false;
+            }
+            
+            // 사용자 삭제
+            userRepository.delete(user);
+            log.debug("회원 탈퇴 성공: {}", userId);
+            return true;
+        } catch (Exception e) {
+            log.error("회원 탈퇴 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("회원 탈퇴 중 오류가 발생했습니다.", e);
+        }
+    }
+
+    /**
+     * 비밀번호 확인 없이 회원 탈퇴
+     * @param userId 사용자 ID
+     * @return 탈퇴 결과 (true: 성공, false: 실패)
+     */
+    @Transactional
+    public boolean deleteUserWithoutPasswordCheck(String userId) {
+        try {
+            log.debug("회원 탈퇴 시도 (비밀번호 확인 없음): {}", userId);
+            
+            // 사용자 존재 확인
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                log.debug("회원 탈퇴 실패: 사용자가 존재하지 않음 - {}", userId);
+                return false;
+            }
+            
+            User user = userOptional.get();
+            
+            // 사용자 삭제
+            userRepository.delete(user);
+            log.debug("회원 탈퇴 성공: {}", userId);
+            return true;
+        } catch (Exception e) {
+            log.error("회원 탈퇴 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("회원 탈퇴 중 오류가 발생했습니다.", e);
+        }
+    }
 }

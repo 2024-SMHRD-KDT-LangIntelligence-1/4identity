@@ -44,6 +44,11 @@ function ProfilePage() {
     "미래 기술·혁신"
   ]);
 
+  // 모달 관련 상태
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [deleteResult, setDeleteResult] = useState({ success: false, message: "" });
+
   useEffect(() => {
     // 로그인 확인
     const userId = localStorage.getItem("userId");
@@ -178,6 +183,57 @@ function ProfilePage() {
     }
   };
 
+  // 회원 탈퇴 모달 표시
+  const handleShowDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+  
+  // 회원 탈퇴 처리
+  const handleDeleteAccount = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      
+      // 비밀번호 확인 로직 제거
+      
+      const response = await axios.delete(`/api/users/${userId}`, {
+        data: {} // 비밀번호 전송 제거
+      });
+      
+      setDeleteResult({
+        success: response.data.success,
+        message: response.data.message
+      });
+      
+      setShowDeleteModal(false);
+      setShowResultModal(true);
+      
+      if (response.data.success) {
+        // 로컬 스토리지에서 사용자 정보 삭제
+        localStorage.removeItem("userId");
+      }
+    } catch (error) {
+      console.error("회원 탈퇴 오류:", error);
+      
+      setDeleteResult({
+        success: false,
+        message: "서버 오류가 발생했습니다. 다시 시도해주세요."
+      });
+      
+      setShowDeleteModal(false);
+      setShowResultModal(true);
+    }
+  };
+  
+  // 결과 모달 닫기 및 리다이렉트
+  const handleCloseResultModal = () => {
+    setShowResultModal(false);
+    
+    // 탈퇴 성공 시 메인 페이지로 이동
+    if (deleteResult.success) {
+      navigate("/");
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -298,10 +354,54 @@ function ProfilePage() {
               </div>
             </div>
             
-            <button onClick={handleUpdateProfile} className="profileBtn">
-              정보 수정
-            </button>
+            {/* 버튼 컨테이너 수정 */}
+            <div className="buttonContainer">
+              <button onClick={handleUpdateProfile} className="profileBtn">
+                정보 수정
+              </button>
+              <button onClick={handleShowDeleteModal} className="deleteAccountBtn">
+                회원 탈퇴
+              </button>
+            </div>
           </div>
+          
+          {/* 회원 탈퇴 확인 모달 */}
+          {showDeleteModal && (
+            <div className="modalOverlay">
+              <div className="modalContent">
+                <h3 className="modalTitle">회원 탈퇴</h3>
+                <p className="modalMessage">정말 회원탈퇴 하시겠습니까?</p>
+                <div className="modalButtons">
+                  <button className="modalCancel" onClick={() => setShowDeleteModal(false)}>
+                    아니오
+                  </button>
+                  <button className="modalConfirm" onClick={handleDeleteAccount}>
+                    예
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* 회원 탈퇴 결과 모달 */}
+          {showResultModal && (
+            <div className="modalOverlay">
+              <div className="modalContent">
+                <h3 className="modalTitle">
+                  {deleteResult.success ? "회원 탈퇴 완료" : "오류"}
+                </h3>
+                <p className="modalMessage">{deleteResult.message}</p>
+                <div className="modalButtons">
+                  <button 
+                    className={deleteResult.success ? "modalConfirm" : "modalCancel"} 
+                    onClick={handleCloseResultModal}
+                  >
+                    확인
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

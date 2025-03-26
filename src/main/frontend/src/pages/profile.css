@@ -433,3 +433,105 @@
     margin-bottom: 5px;
   }
 }
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.profileBtn {
+  flex: 3;
+  background-color: #256433;
+  color: #fff;
+  align-items: center;
+  font-size: 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+}
+
+.deleteAccountBtn {
+  flex: 1;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 40px;
+  transition: background-color 0.3s;
+}
+
+.deleteAccountBtn:hover {
+  background-color: #ffcdd2;
+}
+
+/* 모달 스타일 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modalTitle {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.modalMessage {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modalCancel {
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modalCancel:hover {
+  background-color: #e5e5e5;
+}
+
+.modalConfirm {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modalConfirm:hover {
+  background-color: #d32f2f;
+}

@@ -258,4 +258,36 @@ public class UserController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
+    
+    /**
+     * 회원 탈퇴 API
+     * @param userId 탈퇴할 사용자 아이디
+     * @return 탈퇴 결과
+     */
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable String userId) {
+        System.out.println("회원 탈퇴 요청 도착: " + userId);
+        
+        try {
+            // 비밀번호 검증 없이 삭제 처리
+            boolean deleted = userService.deleteUserWithoutPasswordCheck(userId);
+            
+            Map<String, Object> response = new HashMap<>();
+            if (deleted) {
+                response.put("success", true);
+                response.put("message", "회원 탈퇴가 완료되었습니다.");
+            } else {
+                response.put("success", false);
+                response.put("message", "계정을 찾을 수 없습니다.");
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
 }
