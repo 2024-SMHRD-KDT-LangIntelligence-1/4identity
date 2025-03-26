@@ -36,7 +36,7 @@
 .profileForm {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 5px;
 }
 
 .profileUserId {
@@ -308,7 +308,7 @@
 }
 
 .inputField {
-  margin-bottom: 10px;
+  margin-bottom: 15px;  /* 10px에서 30px로 수정 - 회원가입 페이지와 동일하게 */
 }
 
 .inputField label {
@@ -357,11 +357,11 @@
 }
 
 .signUpCategory {
-  margin-bottom: 20px;
+  margin-bottom: 20px;  /* 5px에서 20px로 수정 - 회원가입 페이지와 동일하게 */
 }
 
 .signUpCategory h4 {
-  margin-bottom: 0;
+  margin-bottom: 0;  /* 5px에서 0으로 수정 - 회원가입 페이지와 일치 */
 }
 
 /* 카테고리 기본 스타일 */
@@ -430,7 +430,7 @@
   }
 
   .inputField {
-    margin-bottom: 5px;
+    margin-bottom: 15px;  /* 5px에서 15px로 수정 - 모바일에서도 적절한 간격 유지 */
   }
 }
 
@@ -438,7 +438,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 20px;  /* 10px에서 20px로 수정 - 더 나은 간격을 위해 */
 }
 
 .profileBtn {

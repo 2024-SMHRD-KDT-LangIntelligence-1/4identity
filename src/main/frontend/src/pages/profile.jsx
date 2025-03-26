@@ -328,6 +328,10 @@ function ProfilePage() {
             {/* 카테고리 선택 */}
             <div className="signUpCategory">
               <h4>관심 분야 변경</h4>
+              <p style={{ fontSize: "13px", color: "#535151" }}>
+                {" "}
+                 관심 있는 분야를 먼저 요약해드릴게요.
+            </p>
               <div className="categoryNum" id="category1">
                 <div 
                   className={selectedCategory === 0 ? "selected" : ""} 
