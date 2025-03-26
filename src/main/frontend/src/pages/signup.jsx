@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Header from "../components/bar.jsx";
-import "./SignUp.css"; // 기존 App.css에서 분리하여 반응형 스타일 적용
+import "./SignUp.css";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
+
+// axios 기본 설정 간소화
+axios.defaults.timeout = 5000; // 타임아웃 설정
 
 function SignUpPage() {
   let navigate = useNavigate();
@@ -11,10 +15,111 @@ function SignUpPage() {
     password: "",
     passwordCheck: "",
     userEmail: "",
+    emailDomain: "naver.com",
   });
 
+  // 상태 변수 추가
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [idCheckMessage, setIdCheckMessage] = useState("");
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryNames] = useState([
+    "산업 및 트렌드",
+    "소비자 기술·제품 리뷰",
+    "정책 및 법률",
+    "기업 및 브랜드",
+    "미래 기술·혁신"
+  ]);
+
   const handleChange = (e, field) => {
-    setFormData({ ...formData, [field]: e.target.value });
+    const value = e.target.value;
+    setFormData({ ...formData, [field]: value });
+    
+    // 아이디가 변경되면 중복 확인 초기화
+    if (field === 'userId') {
+      setIsIdChecked(false);
+      setIdCheckMessage("");
+    }
+    
+    // 비밀번호 확인 로직
+    if (field === 'password' || field === 'passwordCheck') {
+      if (field === 'password') {
+        setPasswordMatch(formData.passwordCheck === "" || value === formData.passwordCheck);
+      } else {
+        setPasswordMatch(value === formData.password);
+      }
+    }
+  };
+
+  // 아이디 중복 확인 - 간소화된 버전
+  const checkDuplicateId = async () => {
+    if (!formData.userId) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+    
+    try {
+      console.log("아이디 중복 확인 요청:", formData.userId);
+      
+      const response = await axios.get(`/api/users/check-id`, {
+        params: { userId: formData.userId }
+      });
+      
+      console.log("서버 응답:", response.data);
+      setIsIdChecked(true);
+      setIdCheckMessage(response.data.message || "사용 가능한 아이디입니다.");
+    } catch (error) {
+      console.error("아이디 중복 확인 중 오류 발생:", error);
+      setIdCheckMessage("서버 연결에 실패했습니다. 서버가 실행 중인지 확인하세요.");
+    }
+  };
+
+  // 회원가입 제출 함수
+  const handleSubmit = async () => {
+    // 유효성 검사
+    if (!formData.userId || !formData.password || !formData.userEmail) {
+      alert("모든 필수 정보를 입력해주세요.");
+      return;
+    }
+    
+    if (!isIdChecked || idCheckMessage === "이미 존재하는 아이디입니다.") {
+      alert("아이디 중복 확인을 해주세요.");
+      return;
+    }
+    
+    if (!passwordMatch) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    
+    if (selectedCategory === null) {
+      alert("관심 분야를 선택해주세요.");
+      return;
+    }
+    
+    // 서버에 전송할 데이터 구성
+    const fullEmail = `${formData.userEmail}@${formData.emailDomain}`;
+    const userData = {
+      userId: formData.userId,
+      userPw: formData.password,
+      userEmail: fullEmail,
+      userInterest: categoryNames[selectedCategory]
+    };
+    
+    try {
+      const response = await axios.post('/api/users/register', userData);
+      console.log('회원가입 응답:', response.data);
+      
+      if (response.data.success) {
+        alert("회원가입이 완료되었습니다!");
+        navigate("/");
+      } else {
+        alert(response.data.message || "회원가입 중 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error("회원가입 중 오류 발생:", error);
+      alert("회원가입 중 오류가 발생했습니다.");
+    }
   };
 
   const signUpFields = [
@@ -34,10 +139,12 @@ function SignUpPage() {
 
   const emailDrops = ["naver.com", "gmail.com", "daum.net"];
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
   const handleCategoryClick = (categoryIndex) => {
     setSelectedCategory(categoryIndex === selectedCategory ? null : categoryIndex);
+  };
+
+  const handleDomainChange = (e) => {
+    setFormData({ ...formData, emailDomain: e.target.value });
   };
 
   return (
@@ -59,8 +166,17 @@ function SignUpPage() {
                 placeholder="아이디를 입력해주세요."
                 id="inputId"
               />
+              {idCheckMessage && (
+                <div style={{
+                  fontSize: '0.8rem', 
+                  marginTop: '5px',
+                  color: idCheckMessage.includes('사용 가능') ? 'green' : 'red'
+                }}>
+                  {idCheckMessage}
+                </div>
+              )}
             </div>
-            <button className="checkBtn">중복확인</button>
+            <button className="checkBtn" onClick={checkDuplicateId}>중복확인</button>
           </div>
 
           {/* 이메일 */}
@@ -76,7 +192,7 @@ function SignUpPage() {
                 style={{ marginRight: "5px" }}
               />
               <span>@</span>
-              <select>
+              <select value={formData.emailDomain} onChange={handleDomainChange}>
                 {emailDrops.map((domain, i) => (
                   <option key={i} value={domain}>
                     {domain}
@@ -97,7 +213,13 @@ function SignUpPage() {
               placeholder={field.placeholder}
             />
           ))}
+          {!passwordMatch && (
+            <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '-20px', marginBottom: '20px' }}>
+              비밀번호가 일치하지 않습니다.
+            </div>
+          )}
         </div>
+
         <div className="signUpCategory">
           <h4> 어떤 분야에 관심이 있나요?</h4>
           <p style={{ fontSize: "13px" }}>
@@ -130,12 +252,7 @@ function SignUpPage() {
           </div>
         </div>
 
-        <button
-          className="signUpBtn"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
+        <button className="signUpBtn" onClick={handleSubmit}>
           회원가입
         </button>
       </div>

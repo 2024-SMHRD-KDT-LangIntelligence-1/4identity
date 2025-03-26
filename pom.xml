@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.4</version>  <!-- 더 안정적인 최신 버전으로 수정 -->
+		<version>3.2.0</version>  <!-- 안정적인 버전으로 수정 -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.smhrd</groupId>
@@ -67,6 +67,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<!-- 디버깅 및 로깅을 위한 추가 의존성 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
+		
+		<!-- DB 연결 테스트를 위한 의존성 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 	</dependencies>
 
