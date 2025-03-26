@@ -34,10 +34,10 @@ function SignUpPage() {
 
   const emailDrops = ["naver.com", "gmail.com", "daum.net"];
 
-  const [category, setCategory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const handleClick = () => {
-    setCategory(!category);
+  const handleCategoryClick = (categoryIndex) => {
+    setSelectedCategory(categoryIndex === selectedCategory ? null : categoryIndex);
   };
 
   return (
@@ -105,13 +105,28 @@ function SignUpPage() {
             관심 있는 분야를 먼저 요약해드릴게요.
           </p>
           <div className="categoryNum" id="category1">
-            <div> 산업 및 트렌드 </div>
-            <div> 소비자 기술·제품 리뷰 </div>
+            <div 
+              className={selectedCategory === 0 ? "selected" : ""} 
+              onClick={() => handleCategoryClick(0)}
+            > 산업 및 트렌드 </div>
+            <div 
+              className={selectedCategory === 1 ? "selected" : ""} 
+              onClick={() => handleCategoryClick(1)}
+            > 소비자 기술·제품 리뷰 </div>
           </div>
           <div className="categoryNum" id="category2">
-            <div> 정책 및 법률 </div>
-            <div> 기업 및 브랜드 </div>
-            <div> 미래 기술·혁신 </div>
+            <div 
+              className={selectedCategory === 2 ? "selected" : ""} 
+              onClick={() => handleCategoryClick(2)}
+            > 정책 및 법률 </div>
+            <div 
+              className={selectedCategory === 3 ? "selected" : ""} 
+              onClick={() => handleCategoryClick(3)}
+            > 기업 및 브랜드 </div>
+            <div 
+              className={selectedCategory === 4 ? "selected" : ""} 
+              onClick={() => handleCategoryClick(4)}
+            > 미래 기술·혁신 </div>
           </div>
         </div>
 

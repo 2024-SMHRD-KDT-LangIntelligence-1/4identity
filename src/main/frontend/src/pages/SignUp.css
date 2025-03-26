@@ -120,7 +120,7 @@ background-color: #256433;
 
 .inputField input,
 .emailInput input,
-.emailInput select {
+emailInput select {
   font-size: 12px;
   height: 20px;
   margin-bottom: 15px;
@@ -152,6 +152,7 @@ height: 35px
   margin-bottom: 0;
 }
 
+/* 카테고리 기본 스타일 */
 .categoryNum {
   display: flex;
 }
@@ -165,9 +166,22 @@ height: 35px
   display: flex;
   justify-content: center;
   align-items: center;   
+  cursor: pointer;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 (살짝 늘림) */
+  color: #333; /* 기본 글자색 명시 */
 }
 
-#category1:selected {
-  color : #fff;
+/* 선택된 카테고리 스타일 */
+.categoryNum div.selected {
+  color: #fff;
   background-color: #256433;
+  border-color: #256433;
+  font-weight: 500; /* 글자를 약간 두껍게 하여 가독성 향상 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 추가 */
+}
+
+/* 호버 효과 수정 */
+.categoryNum div:hover:not(.selected) {
+  background-color: rgba(37, 100, 51, 0.1); /* 메인 색상의 투명한 버전 */
+  border-color: #256433; /* 테두리 색상 변경 */
 }
