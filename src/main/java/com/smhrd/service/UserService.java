@@ -105,4 +105,36 @@ public class UserService {
             return result;
         }
     }
+    
+    /**
+     * 사용자 ID로 사용자 정보 조회
+     * @param userId 사용자 ID
+     * @return 사용자 정보
+     */
+    @Transactional(readOnly = true)
+    public Optional<User> getUserById(String userId) {
+        try {
+            log.debug("사용자 정보 조회: {}", userId);
+            return userRepository.findById(userId);
+        } catch (Exception e) {
+            log.error("사용자 정보 조회 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("사용자 정보 조회 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 사용자 정보 업데이트
+     * @param user 업데이트할 사용자 정보
+     * @return 업데이트된 사용자 정보
+     */
+    @Transactional
+    public User updateUser(User user) {
+        try {
+            log.debug("사용자 정보 업데이트: {}", user.getUserId());
+            return userRepository.save(user);
+        } catch (Exception e) {
+            log.error("사용자 정보 업데이트 중 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("사용자 정보 업데이트 중 오류가 발생했습니다.", e);
+        }
+    }
 }

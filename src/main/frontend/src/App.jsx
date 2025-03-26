@@ -4,6 +4,7 @@ import Header from "./components/bar.jsx";
 import SignUpPage from "./pages/signup.jsx";
 import LoginPage from "./pages/login.jsx";
 import Testpage from "./pages/home.jsx";
+import ProfilePage from "./pages/profile.jsx";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </>
   );
