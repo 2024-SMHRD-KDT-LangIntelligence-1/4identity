@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -51,6 +54,55 @@ public class UserService {
         } catch (Exception e) {
             log.error("회원가입 중 오류 발생: {}", e.getMessage(), e);
             throw new RuntimeException("회원가입 중 오류가 발생했습니다.", e);
+        }
+    }
+    
+    /**
+     * 로그인 검증
+     * @param userId 사용자 아이디
+     * @param userPw 사용자 비밀번호
+     * @return 로그인 결과 (0: 아이디 없음, 1: 비밀번호 불일치, 2: 로그인 성공, user 객체 포함)
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> login(String userId, String userPw) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            log.debug("로그인 시도: {}", userId);
+            
+            // 사용자 아이디로 사용자 정보 조회
+            Optional<User> userOptional = userRepository.findById(userId);
+            
+            // 아이디가 존재하지 않는 경우
+            if (userOptional.isEmpty()) {
+                log.debug("사용자 아이디 없음: {}", userId);
+                result.put("status", 0);
+                result.put("message", "가입 정보가 없습니다");
+                return result;
+            }
+            
+            User user = userOptional.get();
+            
+            // 비밀번호 확인
+            if (!user.getUserPw().equals(userPw)) {
+                log.debug("비밀번호 불일치: {}", userId);
+                result.put("status", 1);
+                result.put("message", "비밀번호가 틀렸습니다");
+                return result;
+            }
+            
+            // 로그인 성공
+            log.debug("로그인 성공: {}", userId);
+            result.put("status", 2);
+            result.put("message", "로그인 성공");
+            result.put("user", user);
+            return result;
+            
+        } catch (Exception e) {
+            log.error("로그인 중 오류 발생: {}", e.getMessage(), e);
+            result.put("status", -1);
+            result.put("message", "로그인 처리 중 오류가 발생했습니다");
+            return result;
         }
     }
 }

@@ -100,4 +100,54 @@ public class UserController {
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
+    
+    /**
+     * 로그인 API
+     * @param loginRequest 로그인 요청 데이터 (userId, userPw)
+     * @return 로그인 결과
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest) {
+        System.out.println("로그인 요청 도착: " + loginRequest.get("userId"));
+        
+        try {
+            // 요청 데이터 검증
+            String userId = loginRequest.get("userId");
+            String userPw = loginRequest.get("userPw");
+            
+            if (userId == null || userPw == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "아이디와 비밀번호를 모두 입력해주세요.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+            
+            // 로그인 처리
+            Map<String, Object> loginResult = userService.login(userId, userPw);
+            
+            Map<String, Object> response = new HashMap<>();
+            int status = (int) loginResult.get("status");
+            
+            if (status == 2) { // 로그인 성공
+                User user = (User) loginResult.get("user");
+                response.put("success", true);
+                response.put("message", "로그인 성공");
+                response.put("userId", user.getUserId());
+                response.put("userEmail", user.getUserEmail());
+                // 필요한 사용자 정보만 전송 (비밀번호 제외)
+            } else { // 로그인 실패
+                response.put("success", false);
+                response.put("message", loginResult.get("message"));
+                response.put("status", status);
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "서버 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
 }
