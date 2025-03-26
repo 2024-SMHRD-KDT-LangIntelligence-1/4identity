@@ -27,10 +27,6 @@ function App() {
           element={
             <>
               <Testpage />
-              <div>
-                <button onClick={goSignUpPage}> 이동 </button>
-                <button onClick={goLoginPage}> 이동2 </button>
-              </div>
             </>
           }
         />

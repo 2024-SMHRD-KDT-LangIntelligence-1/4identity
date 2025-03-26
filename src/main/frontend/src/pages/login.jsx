@@ -52,11 +52,11 @@ function LoginPage() {
       }
 
       console.log("로그인 시도", formData);
-      
+
       // 로그인 API 호출
       const response = await axios.post("/api/users/login", {
         userId: formData.userId,
-        userPw: formData.userPw
+        userPw: formData.userPw,
       });
 
       console.log("로그인 응답:", response.data);
@@ -64,13 +64,13 @@ function LoginPage() {
       if (response.data.success) {
         // 로그인 성공 - 사용자 정보 저장
         localStorage.setItem("userId", response.data.userId);
-        
+
         // 메인 페이지로 이동
-        navigate("/", { 
-          state: { 
-            isLoggedIn: true, 
-            welcomeMessage: `${response.data.userId}님 환영합니다.`
-          } 
+        navigate("/", {
+          state: {
+            isLoggedIn: true,
+            welcomeMessage: `${response.data.userId}님 환영합니다.`,
+          },
         });
       } else {
         // 로그인 실패 - 에러 상태에 따라 적절한 필드에 오류 메시지 표시

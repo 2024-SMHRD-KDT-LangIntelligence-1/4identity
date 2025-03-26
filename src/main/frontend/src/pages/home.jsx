@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Header from "../components/bar.jsx";
+import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
 
 function Testpage() {
@@ -53,6 +54,7 @@ function Testpage() {
             </div>
           </div>
         </div>
+        <NewsForm />
       </main>
     </>
   );

@@ -27,14 +27,18 @@ function Header() {
     <>
       <header className="header">
         <div className="headerBox">
-          <div className="logo" onClick={() => navigate("/")}>4identity</div>
+          <div className="logo" onClick={() => navigate("/")}>
+            4identity
+          </div>
 
           <div className="rightSide">
             <div className="headerBtn">
               {isLoggedIn ? (
                 // 로그인 상태일 때 표시되는 버튼
                 <>
-                  <button onClick={() => navigate("/profile")}>개인정보 수정</button>
+                  <button onClick={() => navigate("/profile")}>
+                    개인정보 수정
+                  </button>
                   <button onClick={handleLogout}>로그아웃</button>
                 </>
               ) : (
@@ -61,6 +65,15 @@ function Header() {
             <li onClick={() => alert("정책 및 법률")}>정책 및 법률</li>
             <li onClick={() => alert("기업 및 브랜드")}>기업 및 브랜드</li>
             <li onClick={() => alert("미래 기술")}>미래 기술·혁신</li>
+
+            <div className="mobileBtn">
+              <li className="mobileOnly">
+                <button onClick={() => navigate("/login")}>로그인</button>
+              </li>
+              <li className="mobileOnly">
+                <button onClick={() => navigate("/signup")}>회원가입</button>
+              </li>
+            </div>
           </ul>
         </nav>
       </header>

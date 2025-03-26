@@ -1,22 +1,12 @@
-header {
-  height: 60px;
-  background-color: #CFE7D8;
-}
-
 main {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-top: 60px;
 }
 
 .home {
-  height: 100vh;
+  margin-top: 100px;
   display: flex;
-}
-
-.backGreen {
-  height: 100vh;
-  background: linear-gradient(to bottom, #CFE7D8 50%, white 50%);
 }
 
 .mainNewsBox {
@@ -25,14 +15,18 @@ main {
   justify-content: center;
   align-items: center; 
 }
-  
+
+.dateNews{
+  display: flex;
+}
+
 .mainNews{
   width: 400px;
   height: 200px;
   padding: 30px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   text-align: center;
-  border-radius: 17px;
+  border-radius: 5px;
 }
   
 .newsList {
@@ -45,9 +39,8 @@ main {
   position: relative;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-left: 10px;
-  height: 200px;
-  padding: 30px;
-  border-radius: 17px;
+  height: 260px;
+  border-radius: 5px;
 }
 
 .newsList {
@@ -62,14 +55,12 @@ main {
 .newsListItem {
   cursor: pointer;
   text-align: left;
-  margin-bottom: 0px;
   width: 150px;
-  font-weight: normal;
   position: relative;
   transition: all 0.3s ease;
 }
 
 .newsListItem:hover {
-  background-color: #CFE7D8;
+  font-weight: bold;
 }
 
