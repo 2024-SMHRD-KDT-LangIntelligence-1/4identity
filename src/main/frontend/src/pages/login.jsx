@@ -7,21 +7,47 @@ import axios from "axios"; // axios 추가
 function LoginPage() {
   let navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  // 필드별 오류 메시지 상태 추가
+  const [fieldErrors, setFieldErrors] = useState({
+    userId: "",
+    userPw: ""
+  });
 
   const [formData, setFormData] = useState({
-    userId: "", // userid에서 userId로 변경하여 백엔드와 일치시킴
-    userPw: "", // password에서 userPw로 변경하여 백엔드와 일치시킴
+    userId: "",
+    userPw: "",
   });
 
   const handleChange = (e, field) => {
     setFormData({ ...formData, [field]: e.target.value });
+    // 사용자가 입력하면 해당 필드의 오류 메시지 초기화
+    setFieldErrors({...fieldErrors, [field]: ""});
+  };
+
+  const validateFields = () => {
+    let isValid = true;
+    const newFieldErrors = { userId: "", userPw: "" };
+    
+    // 아이디 검증
+    if (!formData.userId) {
+      newFieldErrors.userId = "아이디를 입력하지 않았습니다";
+      isValid = false;
+    }
+    
+    // 비밀번호 검증
+    if (!formData.userPw) {
+      newFieldErrors.userPw = "비밀번호를 입력하지 않았습니다";
+      isValid = false;
+    }
+    
+    setFieldErrors(newFieldErrors);
+    return isValid;
   };
 
   const handleLogin = async () => {
     try {
       // 입력값 검증
-      if (!formData.userId || !formData.userPw) {
-        setErrorMessage("아이디와 비밀번호를 모두 입력해주세요");
+      if (!validateFields()) {
         return;
       }
 
@@ -47,8 +73,21 @@ function LoginPage() {
           } 
         });
       } else {
-        // 로그인 실패 - 에러 메시지 표시
-        setErrorMessage(response.data.message);
+        // 로그인 실패 - 에러 상태에 따라 적절한 필드에 오류 메시지 표시
+        const newFieldErrors = { userId: "", userPw: "" };
+        
+        if (response.data.status === 0) {
+          // 아이디가 없는 경우
+          newFieldErrors.userId = "가입 정보가 없습니다";
+        } else if (response.data.status === 1) {
+          // 비밀번호가 틀린 경우
+          newFieldErrors.userPw = "비밀번호가 틀렸습니다";
+        } else {
+          // 기타 오류
+          setErrorMessage(response.data.message);
+        }
+        
+        setFieldErrors(newFieldErrors);
       }
     } catch (error) {
       console.error("로그인 오류:", error);
@@ -60,13 +99,13 @@ function LoginPage() {
     {
       label: "아이디",
       type: "text",
-      state: "userId", // userid에서 userId로 변경
+      state: "userId",
       placeholder: "아이디를 입력해주세요",
     },
     {
       label: "비밀번호",
       type: "password",
-      state: "userPw", // password에서 userPw로 변경
+      state: "userPw",
       placeholder: "비밀번호를 입력해주세요",
     },
   ];
@@ -84,6 +123,7 @@ function LoginPage() {
               value={formData[field.state]}
               onChange={(e) => handleChange(e, field.state)}
               placeholder={field.placeholder}
+              errorMessage={fieldErrors[field.state]}
             />
           ))}
           {errorMessage && <div className="errorMessage">{errorMessage}</div>}
@@ -94,7 +134,7 @@ function LoginPage() {
   );
 }
 
-function LogInFields({ label, type, value, onChange, placeholder }) {
+function LogInFields({ label, type, value, onChange, placeholder, errorMessage }) {
   return (
     <div className="inputField">
       <label>{label}</label>
@@ -104,6 +144,7 @@ function LogInFields({ label, type, value, onChange, placeholder }) {
         onChange={onChange}
         placeholder={placeholder}
       />
+      {errorMessage && <div className="fieldError" style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px' }}>{errorMessage}</div>}
     </div>
   );
 }
