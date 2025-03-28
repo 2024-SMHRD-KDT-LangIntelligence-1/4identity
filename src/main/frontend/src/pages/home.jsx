@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Header from "../components/bar.jsx";
 import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
 
-function Testpage() {
+function Home() {
+  const navigate = useNavigate();
   const testData = [
     {
-      title: "개졸림 사건",
-      summary: "개졸린사건이다",
+      title: "가나다라마바사아자차카파타하치키차카초코촠",
+      summary: "치키치키차카초코초코촠치키치키헉바나나킥먹고싶어지는디;",
     },
     {
       title: "집가고 싶다",
@@ -19,7 +21,7 @@ function Testpage() {
     },
   ];
 
-  const [selectNews, setSelectNews] = useState(null);
+  const [selectNews, setSelectNews] = useState(testData[0]);
 
   return (
     <>
@@ -27,27 +29,29 @@ function Testpage() {
         <Header />
         <div className="home">
           <div className="mainNewsBox">
-            <div className="mainNews">
+            <div className="mainNews" onClick={() => navigate("/newspage")}>
               {selectNews ? (
                 <>
                   <h3>{selectNews.title}</h3>
                   <p>{selectNews.summary}</p>
                 </>
               ) : (
-                <h3>뉴스를 선택해주세요</h3>
+                ""
               )}
             </div>
             <div className="newsListBox">
               <div className="newsList">
                 {testData.map((news, index) => (
                   <div
-                    key={index}
+                    key={news.title}
                     className={`newsListItem ${
                       selectNews === news ? "selected" : ""
                     }`}
                     onClick={() => setSelectNews(news)}
                   >
-                    {news.title}
+                    {news.title.length > 15
+                      ? `${news.title.slice(0, 15)}...`
+                      : news.title}
                   </div>
                 ))}
               </div>
@@ -60,4 +64,4 @@ function Testpage() {
   );
 }
 
-export default Testpage;
+export default Home;

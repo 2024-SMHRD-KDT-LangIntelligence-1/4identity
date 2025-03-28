@@ -16,7 +16,7 @@
 }
 
 .logo {
-  color : #fff;
+  color : #2E2E2E;
   font-size: 22px;
   font-weight: bold;
 }
@@ -64,7 +64,7 @@
 }
 
 .nav ul {
-  color: dimgray;
+  color: 2E2E2E;
   list-style: none;
   display: flex;
   justify-content: center;

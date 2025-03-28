@@ -1,6 +1,81 @@
+* {
+    box-sizing: border-box;
+}
+/* padding, border 포함한 상태로 사이즈가 유지 됨 */
+
+.mainBox {
+    display: flex;
+    gap: 12px;
+    justify-self: center;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+.mainTitle {
+    border-bottom: 2px solid green;
+    margin-bottom: 0px;
+}
 
 .todays {
-    display: flex;
-    width: 200px;
-    background-color: beige;
+    width: 300px;
 }
+
+.todays div {
+    border-bottom: 1px solid #ccc;
+    height: 70px;
+    background-color: #FBFAFA;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-left: 15px;
+}
+
+.titleItem {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.categoryName {
+    width: 200px;
+}
+
+.categoryName div {
+    border-bottom: 1px solid #ccc;
+    height: 175px;
+    background-color: #FBFAFA;    
+    display: flex;
+    justify-content: left;
+    padding: 15px 15px 0px;
+}
+
+.keyWords {
+    width: 120px;
+}
+
+.keyWords div {
+    border-bottom: 1px solid #ccc;
+    height: 350px;
+    background-color: #FBFAFA; 
+    display: flex;
+    justify-content: left;
+    padding: 15px 15px 0px;       
+}
+
+@media (max-width: 768px) {
+    .mainBox {
+      flex-direction: column;
+      align-items: center;
+    }
+    .todays, .categoryName, .keyWords {
+      width: 154%;
+    }
+  
+    .todays div,
+    .categoryName div,
+    .keyWords div {
+      height: auto;
+      padding: 10px;
+      font-size: 13px;
+    }
+  }
