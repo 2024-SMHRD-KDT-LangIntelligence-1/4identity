@@ -58,7 +58,7 @@ function Header() {
           </div>
         </div>
 
-        <nav className={`nav ${menuOpen ? "open" : ""}`}>
+        {/* <nav className={`nav ${menuOpen ? "open" : ""}`}>
           <ul>
             <li onClick={() => alert("산업 및 트렌드")}>산업 및 트렌드</li>
             <li onClick={() => alert("제품리뷰")}>제품 리뷰</li>
@@ -75,7 +75,7 @@ function Header() {
               </li>
             </div>
           </ul>
-        </nav>
+        </nav> */}
       </header>
     </>
   );

@@ -8,15 +8,16 @@ function Home() {
   const navigate = useNavigate();
   const testData = [
     {
-      title: "가나다라마바사아자차카파타하치키차카초코촠",
-      summary: "치키치키차카초코초코촠치키치키헉바나나킥먹고싶어지는디;",
+      title: "긴 글씨 15자 이내로 잘 잘리는지 확인하기 위한 긴 글씨 ",
+      summary:
+        "이건 요약으로 보여줄 내용 하지만 어떻게 될지 모르기 때문에 테스트용으로;",
     },
     {
-      title: "집가고 싶다",
-      summary: "집에가고싶다",
+      title: "테스트",
+      summary: "테스트테스트테스트",
     },
     {
-      title: "생각 안하기",
+      title: "4차산업과인공지는머신러닝딥러닝",
       summary: "흐앙",
     },
   ];
