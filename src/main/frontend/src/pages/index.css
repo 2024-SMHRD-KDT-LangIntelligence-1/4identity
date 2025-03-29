@@ -59,13 +59,14 @@ main {
   text-align: left;
   width: 180px;
   position: relative;
-  padding-bottom: 10px;
+  padding : 17.2px 15px;
   justify-content: center;
-  background-color: antiquewhite;
 }
 
 .newsListItem:hover {
   font-weight: bold;
+  background-color: #CFE7D8;
+  color: #2E2E2E;
 }
 
 @media (max-width: 768px) {
@@ -81,16 +82,15 @@ main {
   }
 
   .mainNews {
-    width: 200%;
+    width: 80%;
     margin-bottom: 20px;
   }
 
   .newsListBox {
     box-sizing: border-box;
-    width: 200%;
+    width: 80%;
     height: auto;
     margin-left: 0;
-    padding: 8%;
   }
 
   .newsList {
@@ -105,4 +105,5 @@ main {
     min-width: 100px;
     flex: 1 1 auto;
   }
+
 }

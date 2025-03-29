@@ -8,7 +8,7 @@ function Home() {
   const navigate = useNavigate();
   const testData = [
     {
-      title: "긴 글씨 15자 이내로 잘 잘리는지 확인하기 위한 긴 글씨 ",
+      title: "긴 글씨 20자 이내로 잘 잘리는지 확인하기 위한 긴 글씨 ",
       summary:
         "이건 요약으로 보여줄 내용 하지만 어떻게 될지 모르기 때문에 테스트용으로;",
     },
@@ -50,8 +50,8 @@ function Home() {
                     }`}
                     onClick={() => setSelectNews(news)}
                   >
-                    {news.title.length > 15
-                      ? `${news.title.slice(0, 15)}...`
+                    {news.title.length > 20
+                      ? `${news.title.slice(0, 20)}...`
                       : news.title}
                   </div>
                 ))}
