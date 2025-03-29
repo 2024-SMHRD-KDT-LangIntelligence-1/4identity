@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import "./newspage.css";
 import Header from "../components/bar";
-import { FaClipboardCheck } from "react-icons/fa6"; // 아이콘 (npm install react-icons --save)
+import { FaCircleCheck } from "react-icons/fa6"; // 아이콘 (npm install react-icons --save)
 
 function NewsPage() {
   return (
@@ -11,7 +11,7 @@ function NewsPage() {
       <div className="pageBody">
         <div className="titleBox">
           <div className="img">
-            <FaClipboardCheck size={35} color="04B404" id="checkImg" />
+            <FaCircleCheck size={35} color="5FB404" id="checkImg" />
             {/* <div className="checkTag"> 검증 된 뉴스 요약입니다.</div> */}
           </div>
           <div className="titleBoxContent">

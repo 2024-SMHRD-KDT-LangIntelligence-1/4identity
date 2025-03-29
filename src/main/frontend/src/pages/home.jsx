@@ -46,7 +46,7 @@ function Home() {
                   <div
                     key={news.title}
                     className={`newsListItem ${
-                      selectNews === news ? "selected" : ""
+                      selectNews.title === news.title ? "selected" : ""
                     }`}
                     onClick={() => setSelectNews(news)}
                   >
