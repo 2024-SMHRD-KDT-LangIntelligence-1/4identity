@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+}
+/* padding, border 포함한 상태로 사이즈가 유지 됨 */
+
+.mainBox {
+    display: flex;
+    gap: 12px;
+    justify-self: center;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+.mainTitle {
+    border-bottom: 2px solid green;
+    margin-bottom: 0px;
+}
+
+.todays {
+    width: 300px;
+}
+
+.todays div {
+    border-bottom: 1px solid #ccc;
+    height: 70px;
+    background-color: #FBFAFA;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-left: 15px;
+}
+
+.titleItem {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding-right: 25px; /* 오른쪽 여백 15px에서 25px로 늘림 */
+}
+
+.categoryName {
+    width: 200px;
+}
+
+.categoryName div {
+    border-bottom: 1px solid #ccc;
+    height: 175px;
+    background-color: #FBFAFA;    
+    display: flex;
+    justify-content: left;
+    padding: 15px 15px 0px;
+}
+
+/* keyWords 컨테이너 스타일 수정 */
+.keyWords {
+    width: 120px;
+    /* 총 높이를 todays와 맞추기 (70px * 5 = 350px) */
+    height: 350px;
+    overflow-y: auto;
+    background-color: #FBFAFA;
+    border-bottom: 1px solid #ccc;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* .keyWords div 스타일 제거 및 키워드 아이템 스타일 수정 */
+.keywordItem {
+    border-bottom: 1px solid #ccc;
+    background-color: #FBFAFA;
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1.2;
+    height: 35px; /* 높이를 todays div 높이의 절반으로 설정 (70px / 2 = 35px) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+/* 첫 번째 아이템을 제외하고 상단 테두리 제거 */
+.keywordItem:not(:first-of-type) {
+    border-top: none;
+}
+
+@media (max-width: 768px) {
+    .mainBox {
+      flex-direction: column;
+      align-items: center;
+    }
+    .todays, .categoryName, .keyWords {
+      width: 100%;
+      max-width: 300px; /* 모바일에서도 적절한 너비 유지 */
+      height: auto; /* 모바일에서는 높이 자동 조정 */
+    }
+  
+    .todays div,
+    .categoryName div {
+      height: auto;
+      padding: 10px;
+      font-size: 13px;
+    }
+    
+    .keywordItem {
+      height: auto;
+      min-height: 30px; /* 모바일에서 최소 높이 설정 */
+      padding: 8px 10px;
+    }
+}

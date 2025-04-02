@@ -1,0 +1,497 @@
+.profileContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f5f5f5;
+  max-width: 600px;
+  margin: 100px auto 0;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profileBox {
+  width: 100%;
+  max-width: 500px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profileBox h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.loadingMessage {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
+
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.profileUserId {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profileUserId h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  border-bottom: 2px solid #CFE7D8;
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.formGroup input:focus {
+  border-color: #CFE7D8;
+  outline: none;
+}
+
+.formGroup input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 4px;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.fieldError {
+  color: #c62828;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.successMessage {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.categoryContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.categoryItem {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid #ddd;
+}
+
+.categoryItem:hover {
+  background-color: #e9f7ef;
+}
+
+.categoryItem.selected {
+  background-color: #CFE7D8;
+  color: #333;
+  border-color: #8BC34A;
+  font-weight: 600;
+}
+
+.submitButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.submitButton:hover {
+  background-color: #388E3C;
+}
+
+.updateButton {
+  width: 100%;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.updateButton:hover {
+  background-color: #3e8e41;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
+
+.notification.success {
+  background-color: #2ecc71;
+}
+
+.notification.error {
+  background-color: #e74c3c;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .profileContainer {
+    margin: 80px 20px 30px;
+    padding: 20px;
+  }
+  
+  .categoryContainer {
+    flex-direction: column;
+  }
+  
+  .categoryItem {
+    text-align: center;
+  }
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formField label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+}
+
+.formField input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.disabledInput {
+  background-color: #f5f5f5;
+  color: #777;
+}
+
+.emailInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emailInput {
+  flex: 1;
+}
+
+.emailAt {
+  font-weight: bold;
+  color: #555;
+}
+
+.emailDomainSelect {
+  flex: 1.5;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.profileWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.profilePage {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.profileTitle {
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  padding-top: 30px;
+  padding-bottom: 10px;
+  margin-top: 60px;
+}
+
+.profileBar {
+  width: 300px;
+  color: gray;
+  border: none;
+  height: 1px;
+  background-color: #ddd;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+
+.profileBtn {
+  background-color: #256433;
+  color: #fff;
+  align-items: center;
+  font-size: 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+}
+
+.profileBtn:hover {
+  background-color: #1e5228;
+}
+
+.signUpCategory {
+  margin-bottom: 20px;  /* 5px에서 20px로 수정 - 회원가입 페이지와 동일하게 */
+}
+
+.signUpCategory h4 {
+  margin-bottom: 0;  /* 5px에서 0으로 수정 - 회원가입 페이지와 일치 */
+}
+
+/* 카테고리 기본 스타일 */
+.categoryNum {
+  display: flex;
+  font-size: 13px;
+}
+
+.categoryNum div {
+  margin: 5px;
+  width: 220px;
+  height: 40px;
+  border: 1px solid #E3E2E2;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;   
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+/* 선택된 카테고리 스타일 */
+.categoryNum div.selected {
+  color: #fff;
+  background-color: #256433;
+  border-color: #256433;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 호버 효과 */
+.categoryNum div:hover:not(.selected) {
+  background-color: rgba(37, 100, 51, 0.1);
+  border-color: #256433;
+}
+
+/* 반응형 미디어쿼리 */
+@media (max-width: 768px) {
+  .profilePage {
+    padding: 15px;
+  }
+
+  .profileTitle {
+    font-size: 20px;
+  }
+
+  .profileBtn {
+    margin-top: 10px;
+  }
+
+  .categoryNum {
+    flex-direction: column;
+  }
+  
+  .categoryNum div {
+    width: 100%;
+  }
+
+  .inputField {
+    margin-bottom: 15px;  /* 5px에서 15px로 수정 - 모바일에서도 적절한 간격 유지 */
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;  /* 10px에서 20px로 수정 - 더 나은 간격을 위해 */
+}
+
+.profileBtn {
+  flex: 3;
+  background-color: #256433;
+  color: #fff;
+  align-items: center;
+  font-size: 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+}
+
+.deleteAccountBtn {
+  flex: 1;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 40px;
+  transition: background-color 0.3s;
+}
+
+.deleteAccountBtn:hover {
+  background-color: #ffcdd2;
+}
+
+/* 모달 스타일 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modalTitle {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.modalMessage {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modalCancel {
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modalCancel:hover {
+  background-color: #e5e5e5;
+}
+
+.modalConfirm {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modalConfirm:hover {
+  background-color: #d32f2f;
+}

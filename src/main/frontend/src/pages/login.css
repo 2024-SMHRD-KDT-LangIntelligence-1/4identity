@@ -1,0 +1,73 @@
+.logInBox {
+    padding-top: 70px;
+    margin: auto;
+    align-items: center;
+}
+
+.logInBox h2 {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+    padding-bottom: 10px;
+    margin-top: 100px;
+}
+
+.logInBar {
+    width: 300px;
+    color: gray;
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+.logInBoxCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+}
+
+.loginInput {
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.logInBtn {
+    width: 100%;
+    max-width: 400px;
+}
+
+.logInBox button {
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    margin-top: 24px;
+    background-color: #256433;
+    color : #fff;
+    font-size: 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+    .loginInput {
+        max-width: 80%;
+        min-width: 260px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .logInBtn {
+        max-width: 80%;
+        min-width: 260px;
+    }
+}
