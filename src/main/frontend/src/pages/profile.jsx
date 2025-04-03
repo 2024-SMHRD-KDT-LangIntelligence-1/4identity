@@ -141,11 +141,17 @@ function ProfilePage() {
       // 완성된 이메일
       const fullEmail = `${formData.emailId}@${formData.emailDomain}`;
 
+      // 관심사 값 설정 - "소비자 기술·제품 리뷰"를 "제품 리뷰"로 변환
+      let userInterest = categoryNames[selectedCategory];
+      if (userInterest === "소비자 기술·제품 리뷰") {
+        userInterest = "제품 리뷰";
+      }
+
       const userId = localStorage.getItem("userId");
       const updateData = {
         currentPassword: formData.currentPassword,
         userEmail: fullEmail,
-        userInterest: categoryNames[selectedCategory]
+        userInterest: userInterest
       };
 
       // 새 비밀번호가 있는 경우만 포함

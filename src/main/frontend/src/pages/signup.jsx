@@ -103,11 +103,18 @@ function SignUpPage() {
 
     // 서버에 전송할 데이터 구성
     const fullEmail = `${formData.userEmail}@${formData.emailDomain}`;
+    
+    // 관심사 값 설정 - "소비자 기술·제품 리뷰"를 "제품 리뷰"로 변환
+    let userInterest = categoryNames[selectedCategory];
+    if (userInterest === "소비자 기술·제품 리뷰") {
+      userInterest = "제품 리뷰";
+    }
+    
     const userData = {
       userId: formData.userId,
       userPw: formData.password,
       userEmail: fullEmail,
-      userInterest: categoryNames[selectedCategory],
+      userInterest: userInterest,
     };
 
     try {

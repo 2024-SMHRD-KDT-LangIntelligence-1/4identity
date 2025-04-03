@@ -141,8 +141,8 @@ public class NewsService {
                 return result;
             }
             
-            // 각 뉴스에 대해 쉼표 수를 계산하고 정렬
-            List<NewsWithCommaCount> newsWithCommaCounts = new ArrayList<>();
+            // 쉼표가 없는 뉴스만 필터링
+            List<News> newsWithoutCommas = new ArrayList<>();
             
             for (News news : allNewsList) {
                 String dates = news.getDates();
@@ -150,21 +150,20 @@ public class NewsService {
                     continue;
                 }
                 
-                // 쉼표 개수 계산 (문자열에서 모든 쉼표의 갯수)
-                long commaCount = dates.chars().filter(ch -> ch == ',').count();
-                newsWithCommaCounts.add(new NewsWithCommaCount(news, commaCount));
+                // 쉼표가 없는 뉴스만 선택
+                if (!dates.contains(",")) {
+                    newsWithoutCommas.add(news);
+                }
             }
             
-            // 쉼표 개수가 많은 순서로 정렬
-            newsWithCommaCounts.sort(Comparator.comparingLong(NewsWithCommaCount::getCommaCount).reversed());
+            log.info("쉼표가 없는 뉴스 수: {}", newsWithoutCommas.size());
             
             // 중복 제목을 확인하기 위한 Set (제목의 첫 6글자)
             Set<String> titlePrefixes = new HashSet<>();
             List<News> selectedNews = new ArrayList<>();
             
             // 제목의 첫 6글자가 중복되지 않는 뉴스를 최대 8개 선택
-            for (NewsWithCommaCount newsWithCount : newsWithCommaCounts) {
-                News news = newsWithCount.getNews();
+            for (News news : newsWithoutCommas) {
                 String title = news.getTitles();
                 
                 // null이나 빈 제목은 건너뜀
@@ -197,9 +196,7 @@ public class NewsService {
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toSet());
                 
-                for (NewsWithCommaCount newsWithCount : newsWithCommaCounts) {
-                    News news = newsWithCount.getNews();
-                    
+                for (News news : newsWithoutCommas) {
                     // 이미 선택된 뉴스는 건너뜀
                     if (selectedNews.contains(news)) {
                         continue;
@@ -230,9 +227,9 @@ public class NewsService {
             if (selectedNews.size() < 8) {
                 log.info("여전히 뉴스가 부족하여 남은 뉴스를 포함합니다.");
                 
-                for (NewsWithCommaCount newsWithCount : newsWithCommaCounts) {
-                    if (!selectedNews.contains(newsWithCount.getNews())) {
-                        selectedNews.add(newsWithCount.getNews());
+                for (News news : newsWithoutCommas) {
+                    if (!selectedNews.contains(news)) {
+                        selectedNews.add(news);
                         if (selectedNews.size() == 8) {
                             break;
                         }
