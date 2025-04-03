@@ -1,0 +1,57 @@
+/* 이미지 로딩 관련 스타일 */
+.image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  min-height: 150px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden; /* 내용이 넘치지 않도록 */
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+img.loading {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img:not(.loading) {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+/* 뉴스 이미지 컨테이너에 특화된 스타일 */
+.newsImageContainer {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.newsImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 이미지 비율 유지하면서 컨테이너 채우기 */
+  transition: transform 0.3s ease;
+}
+
+.newsImage:hover {
+  transform: scale(1.05); /* 마우스 오버 시 약간 확대 */
+}

@@ -5,6 +5,8 @@ import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
 import axios from "axios";
 import { UserContext } from "../App";
+import ImageLoader from "../components/ImageLoader.jsx"; // 새로운 ImageLoader 컴포넌트 가져오기
+import "../components/ImageLoader.css"; // ImageLoader.css 가져오기 추가
 
 function Home() {
   const location = useLocation();
@@ -49,24 +51,23 @@ function Home() {
     );
   };
   
-  // 이미지 URL 처리 함수 추가
+  // 이미지 URL 처리 함수 개선
   const getFirstImageUrl = (imageUrls) => {
     if (!imageUrls) return fallbackImageUrl;
     
-    // 쉼표로 분리된 URL 중 첫 번째만 사용
-    const firstUrl = imageUrls.split(',')[0].trim();
-    return isValidImageUrl(firstUrl) ? firstUrl : fallbackImageUrl;
+    try {
+      // 쉼표로 분리된 URL 중 첫 번째만 사용
+      const firstUrl = imageUrls.split(',')[0].trim();
+      return isValidImageUrl(firstUrl) ? firstUrl : fallbackImageUrl;
+    } catch (e) {
+      console.error("이미지 URL 처리 중 오류:", e);
+      return fallbackImageUrl;
+    }
   };
   
   // 대체 이미지 URL
-  const fallbackImageUrl = "https://via.placeholder.com/400x150?text=No+Image+Available";
+  const fallbackImageUrl = "https://via.placeholder.com/400x200?text=No+Image+Available";
   
-  // 이미지 로드 에러 처리 함수
-  const handleImageError = (e) => {
-    e.target.onerror = null;
-    e.target.src = fallbackImageUrl;
-  };
-
   // 날짜에 따른 뉴스 데이터 가져오기
   useEffect(() => {
     const fetchNewsData = async () => {
@@ -158,11 +159,15 @@ function Home() {
                 ) : selectNews ? (
                   <>
                     <div className="newsImageContainer">
-                      <img 
+                      {/* ImageLoader 컴포넌트 설정 개선 */}
+                      <ImageLoader 
                         src={getFirstImageUrl(selectNews.images)}
                         alt={selectNews.titles || '뉴스 이미지'}
                         className="newsImage"
-                        onError={handleImageError}
+                        width="100%"
+                        height="200px"
+                        fallbackSrc={fallbackImageUrl}
+                        lazyLoad={false} // 메인 이미지는 즉시 로드
                       />
                     </div>
                     <h3>{truncateText(selectNews.titles || '제목 없음', 40)}</h3>

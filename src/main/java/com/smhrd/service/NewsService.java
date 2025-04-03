@@ -18,6 +18,9 @@ public class NewsService {
     @Autowired
     private NewsRepository newsRepository;
     
+    @Autowired
+    private ImageService imageService;
+    
     // 해당 날짜의 키워드 순위를 가져오는 메소드 추가
     public List<Map<String, Object>> getTopKeywordsByDate(String date) {
         log.info("날짜별 상위 키워드 조회 시작: {}", date);
@@ -152,6 +155,10 @@ public class NewsService {
                 
                 // 쉼표가 없는 뉴스만 선택
                 if (!dates.contains(",")) {
+                    // 이미지 URL 처리
+                    if (news.getImages() != null) {
+                        news.setImages(imageService.processImageUrl(news.getImages()));
+                    }
                     newsWithoutCommas.add(news);
                 }
             }
@@ -350,6 +357,13 @@ public class NewsService {
             }
             
             log.info("사용자 관심사와 일치하는 뉴스를 {}개 찾았습니다", matchedNews.size());
+            
+            // 이미지 URL 처리
+            for (News news : matchedNews) {
+                if (news.getImages() != null) {
+                    news.setImages(imageService.processImageUrl(news.getImages()));
+                }
+            }
             
             // 중복 제목 처리를 위한 Set
             Set<String> titlePrefixes = new HashSet<>();

@@ -71,19 +71,22 @@ main {
   flex-direction: column;
 }
 
-/* 뉴스 이미지 컨테이너 및 이미지 스타일 */
+/* 뉴스 이미지 컨테이너 스타일 강화 */
 .newsImageContainer {
   width: 100%;
-  height: 150px;
+  height: 200px !important; /* !important 추가하여 우선 적용 */
   overflow: hidden;
-  margin-bottom: 10px;
+  position: relative;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  background-color: #f0f0f0;
 }
 
 .newsImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 3px;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* 이미지 비율 유지하면서 컨테이너 채우기 */
+  transition: transform 0.3s ease;
 }
 
 /* mainNews 내부 텍스트 스타일 조정 */
