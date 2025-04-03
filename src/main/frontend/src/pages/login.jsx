@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Header from "../components/bar.jsx";
 import "../pages/login.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // axios 추가
+import axios from "axios";
+import { UserContext } from "../App";
 
 function LoginPage() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const { setUserInfo } = useContext(UserContext);
   const [errorMessage, setErrorMessage] = useState("");
-  // 필드별 오류 메시지 상태 추가
   const [fieldErrors, setFieldErrors] = useState({
     userId: "",
     userPw: "",
@@ -20,7 +21,6 @@ function LoginPage() {
 
   const handleChange = (e, field) => {
     setFormData({ ...formData, [field]: e.target.value });
-    // 사용자가 입력하면 해당 필드의 오류 메시지 초기화
     setFieldErrors({ ...fieldErrors, [field]: "" });
   };
 
@@ -28,13 +28,11 @@ function LoginPage() {
     let isValid = true;
     const newFieldErrors = { userId: "", userPw: "" };
 
-    // 아이디 검증
     if (!formData.userId) {
       newFieldErrors.userId = "아이디를 입력하지 않았습니다";
       isValid = false;
     }
 
-    // 비밀번호 검증
     if (!formData.userPw) {
       newFieldErrors.userPw = "비밀번호를 입력하지 않았습니다";
       isValid = false;
@@ -46,14 +44,12 @@ function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      // 입력값 검증
       if (!validateFields()) {
         return;
       }
 
       console.log("로그인 시도", formData);
 
-      // 로그인 API 호출
       const response = await axios.post("/api/users/login", {
         userId: formData.userId,
         userPw: formData.userPw,
@@ -62,32 +58,38 @@ function LoginPage() {
       console.log("로그인 응답:", response.data);
 
       if (response.data.success) {
-        // 로그인 성공 - 모든 사용자 정보 저장
-        localStorage.setItem("userId", response.data.userId);
-        localStorage.setItem("userEmail", response.data.userEmail || "");
-        localStorage.setItem("userInterest", response.data.userInterest || "");
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("loginTime", new Date().toString());
-
+        // 사용자 정보를 Context를 통해 전역으로 설정
+        setUserInfo({
+          isLoggedIn: true,
+          userId: response.data.userId,
+          userInterest: response.data.userInterest || ""
+        });
+        
+        // 단일 객체로 userInfo 저장
+        const userInfoObj = {
+          userId: response.data.userId,
+          userEmail: response.data.userEmail || "",
+          userInterest: response.data.userInterest || "",
+          isLoggedIn: true,
+          loginTime: new Date().toString()
+        };
+        
+        localStorage.setItem("userInfo", JSON.stringify(userInfoObj));
+        
         // 메인 페이지로 이동
         navigate("/", {
-          state: {
-            isLoggedIn: true,
-            welcomeMessage: `${response.data.userId}님 환영합니다.`,
-          },
+          // state: {
+          //   welcomeMessage: `${response.data.userId}님 환영합니다.`,
+          // },
         });
       } else {
-        // 로그인 실패 처리
         const newFieldErrors = { userId: "", userPw: "" };
         
         if (response.data.status === 0) {
-          // 아이디가 없는 경우
           newFieldErrors.userId = "가입 정보가 없습니다";
         } else if (response.data.status === 1) {
-          // 비밀번호가 틀린 경우
           newFieldErrors.userPw = "비밀번호가 틀렸습니다";
         } else {
-          // 기타 오류
           setErrorMessage(response.data.message || "로그인에 실패했습니다.");
         }
 
@@ -95,7 +97,6 @@ function LoginPage() {
       }
     } catch (error) {
       console.error("로그인 오류:", error);
-      // 서버 응답 오류 상세 정보 로깅
       if (error.response) {
         console.error("서버 응답 데이터:", error.response.data);
         console.error("서버 응답 상태:", error.response.status);

@@ -33,7 +33,7 @@ function NewsForm({ selectedDate }) {
       console.log(`[NewsForm] 세션 스토리지 키[${i}]: ${key}, 값: ${sessionStorage.getItem(key)}`);
     }
 
-    const userInfo = sessionStorage.getItem("userInfo");
+    const userInfo = localStorage.getItem("userInfo");
     console.log("[NewsForm] 세션 스토리지에서 가져온 userInfo:", userInfo);
 
     if (userInfo) {

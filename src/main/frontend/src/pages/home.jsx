@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../components/bar.jsx";
 import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
 import axios from "axios";
+import { UserContext } from "../App";
 
 function Home() {
+  const location = useLocation();
+  const { isLoggedIn, userId, userInterest } = useContext(UserContext);
+
+  useEffect(() => {
+    // location.state에서 welcomeMessage 확인
+    if (location.state?.welcomeMessage) {
+      // 환영 메시지 표시 (Toast 또는 Alert 사용 가능)
+      alert(location.state.welcomeMessage);
+
+      // state 초기화 (메시지가 계속 표시되지 않도록)
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
   // 현재 날짜를 YYYY-MM-DD 형식으로 가져오기
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
@@ -99,6 +115,20 @@ function Home() {
       <main>
         <Header />
         <div className="home">
+          {/* <div className="homeContainer">
+            <h1>4identity - Home</h1>
+            
+            {isLoggedIn ? (
+              <div className="userInfo">
+                <h3>{userId}님 환영합니다</h3>
+                {userInterest && (
+                  <p>관심 카테고리: {userInterest}</p>
+                )}
+              </div>
+            ) : (
+              <p>로그인하시면 맞춤 콘텐츠를 확인하실 수 있습니다.</p>
+            )}
+          </div> */}
           <div className="mainNewsBox">
             <div className="dateSelector">
               <input 
