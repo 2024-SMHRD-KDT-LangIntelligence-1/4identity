@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/bar.jsx";
 import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
@@ -8,6 +8,7 @@ import { UserContext } from "../App";
 
 function Home() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isLoggedIn, userId, userInterest } = useContext(UserContext);
 
   useEffect(() => {
@@ -110,6 +111,12 @@ function Home() {
     setSelectedDate(e.target.value);
   };
 
+  // 뉴스 클릭 시 상세 페이지로 이동하는 함수
+  const handleNewsClick = (news) => {
+    // NewsPage로 이동하면서 선택된 뉴스 데이터를 state로 전달
+    navigate('/newspage', { state: { newsData: news } });
+  };
+
   return (
     <>
       <main>
@@ -139,7 +146,11 @@ function Home() {
               />
             </div>
             <div className="mainNewsContainer">
-              <div className="mainNews">
+              <div 
+                className="mainNews" 
+                onClick={() => selectNews && handleNewsClick(selectNews)}
+                style={{ cursor: 'pointer' }}
+              >
                 {loading ? (
                   <p>뉴스를 불러오는 중입니다...</p>
                 ) : error ? (

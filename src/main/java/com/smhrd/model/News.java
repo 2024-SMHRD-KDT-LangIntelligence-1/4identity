@@ -39,6 +39,9 @@ public class News {
     @Column(name = "Category")
     private String category;
     
+    @Column(name = "URLs")
+    private String urls;
+    
     // 필드명과 게터/세터 이름 일치시키기
     public String getTitles() {
         return titles;
@@ -86,5 +89,21 @@ public class News {
     
     public void setCategory(String category) {
         this.category = category;
+    }
+    
+    public String getUrls() {
+        return urls;
+    }
+    
+    public void setUrls(String urls) {
+        this.urls = urls;
+    }
+    
+    public String getPress() {
+        return press;
+    }
+    
+    public void setPress(String press) {
+        this.press = press;
     }
 }

@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./newsForm.css";
+import { useNavigate } from "react-router-dom"; // 네비게이션 훅 추가
 
 function NewsForm({ selectedDate }) {
+  // 네비게이션 훅 사용
+  const navigate = useNavigate();
+
   // 사용자 관심사 카테고리 목록
   const categoryOptions = [
     "산업 및 트렌드",
@@ -12,9 +16,11 @@ function NewsForm({ selectedDate }) {
     "미래 기술·혁신",
   ];
 
-  const [titles, setTitles] = useState([]);
+  // 상태 정의 - titles 대신 newsData로 전체 데이터 저장
+  const [newsData, setNewsData] = useState([]);
   const [keywords, setKeywords] = useState([]);
   const [userInterestNews, setUserInterestNews] = useState([]);
+  const [userInterestNewsData, setUserInterestNewsData] = useState([]); // 전체 데이터 저장
   const [userInterest, setUserInterest] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -22,6 +28,12 @@ function NewsForm({ selectedDate }) {
   const [error, setError] = useState(null);
   const [interestError, setInterestError] = useState(null);
   const [initialized, setInitialized] = useState(false);
+
+  // 뉴스 클릭 핸들러 함수
+  const handleNewsClick = (news) => {
+    // NewsPage로 이동하면서 선택된 뉴스 데이터를 state로 전달
+    navigate('/newspage', { state: { newsData: news } });
+  };
 
   // 세션 스토리지에서 사용자 정보를 확인하는 함수
   const checkLoginStatus = useCallback(() => {
@@ -130,20 +142,20 @@ function NewsForm({ selectedDate }) {
               console.log("[NewsForm] 첫 번째 추가 뉴스 제목:", response.data.additionalNews[0].titles);
             }
 
-            // 뉴스 제목만 추출하여 상태 업데이트
-            const newsTitles = response.data.additionalNews
-              .filter(news => news && news.titles && news.titles.trim() !== '')
-              .map(news => news.titles);
+            // 전체 뉴스 데이터 저장
+            const validNewsData = response.data.additionalNews.filter(
+              news => news && news.titles && news.titles.trim() !== ''
+            );
 
-            console.log("[NewsForm] 표시할 뉴스 제목 목록:", newsTitles);
-            setTitles(newsTitles);
+            console.log("[NewsForm] 표시할 뉴스 데이터:", validNewsData);
+            setNewsData(validNewsData); // 전체 뉴스 데이터 저장
           } else {
             console.log("[NewsForm] 추가 뉴스 배열이 비어있거나 배열이 아닙니다");
-            setTitles([]);
+            setNewsData([]);
           }
         } else {
           console.log("[NewsForm] additionalNews 속성이 응답에 없습니다:", response.data);
-          setTitles([]);
+          setNewsData([]);
         }
 
         // 키워드 데이터 확인 및 설정
@@ -171,7 +183,7 @@ function NewsForm({ selectedDate }) {
           console.error("[NewsForm] 에러 상태:", error.response.status);
         }
         setError(error.message);
-        setTitles([]);
+        setNewsData([]);
         setKeywords([]);
       } finally {
         setLoading(false);
@@ -197,6 +209,7 @@ function NewsForm({ selectedDate }) {
         console.log("[NewsForm] 사용자 관심사가 없거나 로그인 상태가 아니어서 관심사 뉴스를 가져오지 않습니다");
         setInterestLoading(false);
         setUserInterestNews([]);
+        setUserInterestNewsData([]);
         return;
       }
 
@@ -220,16 +233,23 @@ function NewsForm({ selectedDate }) {
         console.log("[NewsForm] 사용자 관심사 뉴스 응답:", response.data);
 
         if (Array.isArray(response.data) && response.data.length > 0) {
+          // 유효한 뉴스 데이터 필터링
+          const validNewsData = response.data.filter(
+            news => news && news.titles && news.titles.trim() !== ''
+          );
+
           // 뉴스 제목만 추출하여 상태 업데이트
-          const interestNewsTitles = response.data
-            .filter(news => news && news.titles && news.titles.trim() !== '')
-            .map(news => news.titles);
+          const interestNewsTitles = validNewsData.map(news => news.titles);
 
           console.log("[NewsForm] 표시할 사용자 관심사 뉴스 제목:", interestNewsTitles);
+          console.log("[NewsForm] 사용자 관심사 뉴스 전체 데이터:", validNewsData);
+
           setUserInterestNews(interestNewsTitles);
+          setUserInterestNewsData(validNewsData); // 전체 데이터 저장
         } else {
           console.log("[NewsForm] 사용자 관심사에 맞는 뉴스가 없습니다");
           setUserInterestNews([]);
+          setUserInterestNewsData([]);
         }
       } catch (error) {
         console.error("[NewsForm] 사용자 관심사 뉴스 가져오기 실패:", error);
@@ -246,6 +266,7 @@ function NewsForm({ selectedDate }) {
         }
         setInterestError(error.message);
         setUserInterestNews([]);
+        setUserInterestNewsData([]);
       } finally {
         setInterestLoading(false);
       }
@@ -278,10 +299,16 @@ function NewsForm({ selectedDate }) {
             <div>로딩 중...</div>
           ) : error ? (
             <div>데이터를 불러올 수 없습니다: {error}</div>
-          ) : titles.length > 0 ? (
-            titles.map((title, index) => (
-              <div key={index} className="titleItem" title={title}>
-                {title.length > 25 ? `${title.slice(0, 25)}...` : title}
+          ) : newsData.length > 0 ? (
+            newsData.map((news, index) => (
+              <div 
+                key={index} 
+                className="titleItem" 
+                title={news.titles}
+                onClick={() => handleNewsClick(news)} // 클릭 이벤트 추가
+                style={{ cursor: 'pointer' }} // 마우스 커서 스타일 변경
+              >
+                {news.titles.length > 25 ? `${news.titles.slice(0, 25)}...` : news.titles}
               </div>
             ))
           ) : (
@@ -299,10 +326,16 @@ function NewsForm({ selectedDate }) {
             <div>로딩 중...</div>
           ) : interestError ? (
             <div>데이터를 불러올 수 없습니다: {interestError}</div>
-          ) : userInterestNews.length > 0 ? (
-            userInterestNews.map((title, index) => (
-              <div key={index} className="titleItem" title={title}>
-                {title.length > 25 ? `${title.slice(0, 25)}...` : title}
+          ) : userInterestNewsData.length > 0 ? (
+            userInterestNewsData.map((news, index) => (
+              <div 
+                key={index} 
+                className="titleItem" 
+                title={news.titles}
+                onClick={() => handleNewsClick(news)} // 클릭 이벤트 추가
+                style={{ cursor: 'pointer' }} // 마우스 커서 스타일 변경
+              >
+                {news.titles.length > 25 ? `${news.titles.slice(0, 25)}...` : news.titles}
               </div>
             ))
           ) : (
