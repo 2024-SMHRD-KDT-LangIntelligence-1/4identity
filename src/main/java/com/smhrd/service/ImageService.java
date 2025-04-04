@@ -56,7 +56,7 @@ public class ImageService {
     // 이미지 캐시 설정 (캐시 크기 제한 및 만료 설정)
     private final Cache<String, String> imageCache = Caffeine.newBuilder()
             .maximumSize(1000)       // 최대 1000개 이미지 캐시
-            .expireAfterWrite(7, TimeUnit.DAYS)  // 7일 후 만료
+            .expireAfterWrite(24, TimeUnit.HOURS)  // 24시간 후 만료
             .build();
     
     // 로딩 실패한 URL 추적 (불필요한 재시도 방지)

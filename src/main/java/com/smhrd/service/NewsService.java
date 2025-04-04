@@ -229,7 +229,6 @@ public class NewsService {
                     }
                 }
             }
-            
             // 그래도 충분하지 않다면 남은 뉴스 추가
             if (selectedNews.size() < 8) {
                 log.info("여전히 뉴스가 부족하여 남은 뉴스를 포함합니다.");
@@ -294,25 +293,6 @@ public class NewsService {
                 .replaceAll("\\s+", "")
                 .replaceAll("[^a-z0-9가-힣]", "");
     }
-
-    // 뉴스와 쉼표 수를 함께 관리하는 내부 클래스
-    // private static class NewsWithCommaCount {
-    //     private final News news;
-    //     private final long commaCount;
-        
-    //     public NewsWithCommaCount(News news, long commaCount) {
-    //         this.news = news;
-    //         this.commaCount = commaCount;
-    //     }
-        
-    //     public News getNews() {
-    //         return news;
-    //     }
-        
-    //     public long getCommaCount() {
-    //         return commaCount;
-    //     }
-    // }
     
     /**
      * 사용자 관심사에 맞는 뉴스 조회
