@@ -6,7 +6,7 @@ import { UserContext } from "../App";
 function Header() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  
+
   // UserContext에서 사용자 정보와 로그아웃 함수 가져오기
   const { isLoggedIn, userId, userInterest, logout } = useContext(UserContext);
 
@@ -57,23 +57,21 @@ function Header() {
         </div>
 
         <nav className={`nav ${menuOpen ? "open" : ""}`}>
-          {isLoggedIn ? (
-            <ul>
-              <li>
+          <ul>
+            {isLoggedIn ? (
+              <li className="mobileOnly">
                 <button onClick={() => navigate("/profile")}>
-                  개인정보 수정{" "}
+                  개인정보 수정
                 </button>
                 <button onClick={logout}>로그아웃</button>
               </li>
-            </ul>
-          ) : (
-            <ul>
+            ) : (
               <li className="mobileOnly">
                 <button onClick={() => navigate("/login")}>로그인</button>
                 <button onClick={() => navigate("/signup")}>회원가입</button>
               </li>
-            </ul>
-          )}
+            )}
+          </ul>
         </nav>
       </header>
     </>

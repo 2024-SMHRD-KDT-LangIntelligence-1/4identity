@@ -8,7 +8,7 @@ main {
 }
 
 .home {
-  margin-top: 60px; /* 상단바와의 간격 증가 */
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -38,18 +38,21 @@ main {
 .dateSelector {
   position: absolute;
   top: 10px; /* 상단 여백 조정 */
-  left: 50%; /* 중앙 기준 */
-  transform: translateX(-50%); /* 중앙 정렬 */
+  left: 38.5%; /* 중앙 기준 */
   margin-left: -320px; /* mainNewsContainer 너비의 절반만큼 왼쪽으로 이동 (600px / 2) */
   z-index: 5;
+  
 }
 
 .datePicker {
+  
   padding: 8px 12px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 15px;
+  font-size: 15px;
+  color: #333;
   cursor: pointer;
+  font-family: 'Noto Sans KR';
 }
 
 .datePicker:hover {
@@ -71,27 +74,24 @@ main {
   flex-direction: column;
 }
 
-/* 뉴스 이미지 컨테이너 스타일 강화 */
+/* 뉴스 이미지 컨테이너 및 이미지 스타일 */
 .newsImageContainer {
   width: 100%;
-  height: 200px !important; /* !important 추가하여 우선 적용 */
+  height: 150px;
   overflow: hidden;
-  position: relative;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  background-color: #f0f0f0;
+  margin-bottom: 10px;
 }
 
 .newsImage {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important; /* 이미지 비율 유지하면서 컨테이너 채우기 */
-  transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
 }
 
 /* mainNews 내부 텍스트 스타일 조정 */
 .mainNews h3 {
-  margin-top: 0;
+  margin-top: 15px;
   margin-bottom: 8px;
   font-size: 16px;
   word-wrap: break-word;
@@ -104,16 +104,17 @@ main {
   overflow-wrap: break-word;
   text-align: center; /* 가로 중앙 정렬 */
   margin: auto; /* 상하좌우 자동 마진으로 중앙 배치 */
-  padding: 10px 0;
+  padding: 10px 15px;
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 6;
-  line-clamp: 6;
-  -webkit-box-orient: vertical;
+  
+  font-size: 16px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: #333;
 }
 
 .newsListBox {
@@ -142,16 +143,11 @@ main {
   padding: 0 15px;
   flex: 1;
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: flex-start; /* 왼쪽부터 시작 */
+  align-items: center; 
+  justify-content: flex-start;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  line-height: 1.2;
 }
 
 .newsListItem:hover {
@@ -169,14 +165,14 @@ main {
   .home {
     flex-direction: column;
     align-items: center;
-    margin-top: 90px;
+    margin-top: 50px;
   }
 
   .mainNewsBox {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding-top: 50px; /* 모바일에서 날짜 선택기를 위한 여백 유지 */
+    /* padding-top: 50px; 모바일에서 날짜 선택기를 위한 여백 유지 */
     margin-top: 10px; /* 추가 여백 */
   }
 
@@ -208,7 +204,7 @@ main {
   .newsListBox {
     box-sizing: border-box;
     width: 80%;
-    height: 500px; /* 높이 유지 */
+    height: 250px; /* 높이 유지 */
     margin-left: 0;
     margin-top: 20px; /* 여백 추가 */
   }
@@ -218,7 +214,6 @@ main {
     flex-wrap: nowrap;
     gap: 0;
     margin-left: 0;
-    height: 100%;
   }
 
   .newsListItem {
