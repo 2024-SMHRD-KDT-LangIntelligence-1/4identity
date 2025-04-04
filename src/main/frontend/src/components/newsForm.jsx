@@ -32,8 +32,13 @@ function NewsForm({ selectedDate }) {
 
   // 뉴스 클릭 핸들러 함수
   const handleNewsClick = (news) => {
-    // NewsPage로 이동하면서 선택된 뉴스 데이터를 state로 전달
-    navigate('/newspage', { state: { newsData: news } });
+    // NewsPage로 이동하면서 선택된 뉴스 데이터와 현재 날짜를 state로 전달
+    navigate('/newspage', { 
+      state: { 
+        newsData: news,
+        selectedDate: selectedDate 
+      } 
+    });
   };
 
   // 세션 스토리지에서 사용자 정보를 확인하는 함수

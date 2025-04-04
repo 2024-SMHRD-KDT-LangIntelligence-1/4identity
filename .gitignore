@@ -34,3 +34,7 @@ build/
 
 # DB Connection
 application.properties
+
+# Image 
+image-cache
+logs

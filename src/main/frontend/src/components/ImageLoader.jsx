@@ -29,9 +29,6 @@ const ImageLoader = ({
   // 이미지 오류 상태
   const [error, setError] = useState(false);
   
-  // 디버깅 로그 출력
-  console.log(`ImageLoader 렌더링 - src: ${src}, imgSrc: ${imgSrc}, loading: ${loading}, error: ${error}`);
-  
   // 이미지 URL 유효성 확인 함수
   const isValidUrl = (url) => {
     if (!url) return false;
@@ -51,23 +48,18 @@ const ImageLoader = ({
   
   // 이미지 로드 완료 처리 함수
   const handleLoad = () => {
-    console.log(`이미지 로드 완료: ${imgSrc}`);
     setLoading(false);
   };
   
   // 지연 로딩 및 캐싱 처리
   useEffect(() => {
-    console.log(`ImageLoader useEffect - src: ${src}`);
-    
     if (!src) {
-      console.log('소스 없음, 대체 이미지 사용');
       setImgSrc(fallbackSrc);
       return;
     }
     
     // 유효하지 않은 URL이면 대체 이미지 사용
     if (!isValidUrl(src)) {
-      console.log(`유효하지 않은 URL: ${src}, 대체 이미지 사용`);
       setImgSrc(fallbackSrc);
       return;
     }
@@ -77,7 +69,6 @@ const ImageLoader = ({
     
     // 캐시된 이미지가 있는지 확인
     if (imageCache.has(src)) {
-      console.log(`캐시된 이미지 사용: ${src}`);
       setImgSrc(src);
       setLoading(false);
       return;
@@ -89,7 +80,6 @@ const ImageLoader = ({
       img.src = src;
       
       img.onload = () => {
-        console.log(`이미지 프리로드 성공: ${src}`);
         imageCache.set(src, true);
         setImgSrc(src);
         setLoading(false);
@@ -107,7 +97,6 @@ const ImageLoader = ({
       try {
         const observer = new IntersectionObserver((entries) => {
           if (entries[0].isIntersecting) {
-            console.log(`화면에 표시됨, 이미지 로딩 시작: ${src}`);
             preloadImage();
             observer.disconnect();
           }
@@ -118,9 +107,7 @@ const ImageLoader = ({
           const currentElement = document.querySelector(`[data-src="${src}"]`);
           if (currentElement) {
             observer.observe(currentElement);
-            console.log(`요소 관찰 시작: ${src}`);
           } else {
-            console.warn(`관찰할 요소를 찾을 수 없음: ${src}`);
             // 요소를 찾을 수 없으면 바로 이미지 로드
             preloadImage();
           }
@@ -136,7 +123,6 @@ const ImageLoader = ({
       }
     } else {
       // 지연 로딩을 사용하지 않는 경우 바로 이미지 프리로드
-      console.log(`즉시 로딩 시작: ${src}`);
       preloadImage();
     }
   }, [src, fallbackSrc, error, lazyLoad]);

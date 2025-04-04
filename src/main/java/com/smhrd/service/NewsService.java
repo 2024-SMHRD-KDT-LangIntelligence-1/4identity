@@ -296,23 +296,23 @@ public class NewsService {
     }
 
     // 뉴스와 쉼표 수를 함께 관리하는 내부 클래스
-    private static class NewsWithCommaCount {
-        private final News news;
-        private final long commaCount;
+    // private static class NewsWithCommaCount {
+    //     private final News news;
+    //     private final long commaCount;
         
-        public NewsWithCommaCount(News news, long commaCount) {
-            this.news = news;
-            this.commaCount = commaCount;
-        }
+    //     public NewsWithCommaCount(News news, long commaCount) {
+    //         this.news = news;
+    //         this.commaCount = commaCount;
+    //     }
         
-        public News getNews() {
-            return news;
-        }
+    //     public News getNews() {
+    //         return news;
+    //     }
         
-        public long getCommaCount() {
-            return commaCount;
-        }
-    }
+    //     public long getCommaCount() {
+    //         return commaCount;
+    //     }
+    // }
     
     /**
      * 사용자 관심사에 맞는 뉴스 조회

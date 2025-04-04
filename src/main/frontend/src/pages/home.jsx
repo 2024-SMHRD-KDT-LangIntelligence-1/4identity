@@ -28,8 +28,10 @@ function Home() {
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
   
+  // 저장된 날짜가 있으면 불러오고, 없으면 현재 날짜 사용
+  const savedDate = localStorage.getItem('selectedNewsDate');
   // 선택된 날짜 상태 관리
-  const [selectedDate, setSelectedDate] = useState(formattedDate);
+  const [selectedDate, setSelectedDate] = useState(savedDate || formattedDate);
   // 뉴스 데이터 상태 관리
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,13 +111,21 @@ function Home() {
 
   // 날짜 변경 핸들러
   const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+    // 선택된 날짜를 localStorage에 저장
+    localStorage.setItem('selectedNewsDate', newDate);
   };
 
   // 뉴스 클릭 시 상세 페이지로 이동하는 함수
   const handleNewsClick = (news) => {
-    // NewsPage로 이동하면서 선택된 뉴스 데이터를 state로 전달
-    navigate('/newspage', { state: { newsData: news } });
+    // NewsPage로 이동하면서 선택된 뉴스 데이터와 현재 선택된 날짜를 state로 전달
+    navigate('/newspage', { 
+      state: { 
+        newsData: news,
+        selectedDate: selectedDate 
+      } 
+    });
   };
 
   return (

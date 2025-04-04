@@ -3,11 +3,18 @@ package com.smhrd.service;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +24,15 @@ import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Service
 public class ImageService {
@@ -35,27 +46,118 @@ public class ImageService {
     // 대체 이미지 URL (유효하지 않은 이미지 URL 대신 사용)
     private static final String FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x200?text=No+Image+Available";
     
+    // 디스크 캐시 파일 경로
+    @Value("${app.image-cache.path:./image-cache}")
+    private String cacheDirectoryPath;
+    
+    private final String MEMORY_CACHE_FILE = "memory-cache.ser";
+    private final String FAILED_URLS_FILE = "failed-urls.ser";
+    
     // 이미지 캐시 설정 (캐시 크기 제한 및 만료 설정)
     private final Cache<String, String> imageCache = Caffeine.newBuilder()
-            .maximumSize(500)       // 최대 500개 이미지 캐시
-            .expireAfterWrite(24, TimeUnit.HOURS)  // 24시간 후 만료
+            .maximumSize(1000)       // 최대 1000개 이미지 캐시
+            .expireAfterWrite(7, TimeUnit.DAYS)  // 7일 후 만료
             .build();
     
     // 로딩 실패한 URL 추적 (불필요한 재시도 방지)
     private final Map<String, Long> failedUrls = new HashMap<>();
     private static final long RETRY_DELAY = 3600000; // 1시간 후 재시도
     
+    @PostConstruct
+    public void init() {
+        // 캐시 디렉토리 생성
+        try {
+            Path cachePath = Paths.get(cacheDirectoryPath);
+            if (!Files.exists(cachePath)) {
+                Files.createDirectories(cachePath);
+                log.info("이미지 캐시 디렉토리 생성: {}", cacheDirectoryPath);
+            }
+            
+            // 기존 캐시 로드
+            loadCacheFromDisk();
+        } catch (IOException e) {
+            log.error("캐시 디렉토리 생성 중 오류: {}", e.getMessage());
+        }
+    }
+    
+    @PreDestroy
+    public void cleanup() {
+        // 서버 종료 시 캐시 저장
+        saveCacheToDisk();
+    }
+    
     /**
-     * 이미지 URL 프로세싱 처리 개선
+     * 메모리에 있는 캐시를 디스크에 저장
+     */
+    private void saveCacheToDisk() {
+        // 메모리 캐시 저장
+        File memoryCacheFile = new File(cacheDirectoryPath, MEMORY_CACHE_FILE);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(memoryCacheFile))) {
+            Map<String, String> cacheMap = new HashMap<>();
+            imageCache.asMap().forEach(cacheMap::put);
+            oos.writeObject(cacheMap);
+            log.info("메모리 캐시를 디스크에 저장 완료, 캐시 항목 수: {}", cacheMap.size());
+        } catch (IOException e) {
+            log.error("메모리 캐시 저장 실패: {}", e.getMessage());
+        }
+        
+        // 실패한 URL 저장
+        File failedUrlsFile = new File(cacheDirectoryPath, FAILED_URLS_FILE);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(failedUrlsFile))) {
+            oos.writeObject(failedUrls);
+            log.info("실패한 URL 목록 저장 완료, 항목 수: {}", failedUrls.size());
+        } catch (IOException e) {
+            log.error("실패한 URL 목록 저장 실패: {}", e.getMessage());
+        }
+    }
+    
+    /**
+     * 디스크에서 캐시 로드
+     */
+    @SuppressWarnings("unchecked")
+    private void loadCacheFromDisk() {
+        // 메모리 캐시 로드
+        File memoryCacheFile = new File(cacheDirectoryPath, MEMORY_CACHE_FILE);
+        if (memoryCacheFile.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(memoryCacheFile))) {
+                Map<String, String> cacheMap = (Map<String, String>) ois.readObject();
+                cacheMap.forEach(imageCache::put);
+                log.info("디스크에서 메모리 캐시 로드 완료, 캐시 항목 수: {}", cacheMap.size());
+            } catch (IOException | ClassNotFoundException e) {
+                log.error("메모리 캐시 로드 실패: {}", e.getMessage());
+            }
+        }
+        
+        // 실패한 URL 로드
+        File failedUrlsFile = new File(cacheDirectoryPath, FAILED_URLS_FILE);
+        if (failedUrlsFile.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(failedUrlsFile))) {
+                Map<String, Long> loadedFailedUrls = (Map<String, Long>) ois.readObject();
+                failedUrls.putAll(loadedFailedUrls);
+                log.info("디스크에서 실패한 URL 목록 로드 완료, 항목 수: {}", failedUrls.size());
+            } catch (IOException | ClassNotFoundException e) {
+                log.error("실패한 URL 목록 로드 실패: {}", e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * 정기적으로 캐시를 디스크에 저장 (1시간마다)
+     */
+    @Scheduled(fixedRate = 3600000)
+    public void scheduledCacheSave() {
+        saveCacheToDisk();
+    }
+    
+    /**
+     * 이미지 URL 프로세싱 처리
      * - 이미지 캐싱, 리사이징, 오류 처리를 담당
-     * - CORS 문제 처리 추가
      * 
      * @param imageUrls DB에서 가져온 이미지 URL (콤마로 구분된 여러 URL 가능)
      * @return 처리된 이미지 URL
      */
     public String processImageUrl(String imageUrls) {
         if (imageUrls == null || imageUrls.trim().isEmpty()) {
-            log.debug("빈 이미지 URL, 대체 이미지 반환");
             return FALLBACK_IMAGE_URL;
         }
         
@@ -65,34 +167,30 @@ public class ImageService {
             
             // URL 유효성 검사
             if (!isValidImageUrl(imageUrl)) {
-                log.debug("유효하지 않은 이미지 URL 형식: {}", imageUrl);
                 return FALLBACK_IMAGE_URL;
             }
             
             // CORS 문제가 있는 도메인인지 확인 (예: 일부 뉴스 사이트)
             if (hasCorsIssue(imageUrl)) {
-                log.debug("CORS 이슈가 있는 URL: {}, 이미지 프록시 사용", imageUrl);
                 return proxyImage(imageUrl);
             }
             
             // 이미 처리에 실패한 URL인지 확인
             if (isFailedUrl(imageUrl)) {
-                log.debug("이전에 실패한 URL: {}", imageUrl);
                 return FALLBACK_IMAGE_URL;
             }
             
             // 캐시에서 이미지 URL 확인
             String cachedUrl = imageCache.getIfPresent(imageUrl);
             if (cachedUrl != null) {
-                log.debug("캐시된 이미지 URL 반환: {}", imageUrl);
                 return cachedUrl;
             }
             
             // 이미지 URL에 접근하여 유효성 테스트
             HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
             connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(3000); // 3초 타임아웃
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(2000); // 2초 타임아웃
+            connection.setReadTimeout(2000);
             
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
@@ -103,7 +201,6 @@ public class ImageService {
             
             // 이미지 크기가 큰 경우 Base64로 인코딩하여 리사이징
             if (isLargeImage(connection)) {
-                log.info("큰 이미지 감지, 리사이징 진행: {}", imageUrl);
                 String optimizedImage = resizeAndOptimizeImage(imageUrl);
                 if (optimizedImage != null) {
                     imageCache.put(imageUrl, optimizedImage);
@@ -285,9 +382,14 @@ public class ImageService {
     @Scheduled(fixedRate = 3600000)
     public void cleanupFailedUrls() {
         long currentTime = System.currentTimeMillis();
+        int beforeSize = failedUrls.size();
         failedUrls.entrySet().removeIf(entry -> 
             currentTime - entry.getValue() > RETRY_DELAY);
-        log.debug("실패한 URL 목록 정리 완료, 현재 개수: {}", failedUrls.size());
+        
+        if (beforeSize != failedUrls.size()) {
+            log.info("실패한 URL 목록 정리 완료, 제거된 URL 수: {}, 현재 개수: {}", 
+                  beforeSize - failedUrls.size(), failedUrls.size());
+        }
     }
     
     /**

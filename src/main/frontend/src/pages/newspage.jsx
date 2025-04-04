@@ -16,6 +16,11 @@ function NewsPage() {
       setNewsData(location.state.newsData);
       console.log("전달된 뉴스 데이터:", location.state.newsData);
       
+      // 전달받은 날짜가 있으면 localStorage에 저장
+      if (location.state.selectedDate) {
+        localStorage.setItem('selectedNewsDate', location.state.selectedDate);
+      }
+      
       // press와 urls 데이터 파싱하여 relatedNewsLinks 생성
       const press = location.state.newsData.press || '';
       const urls = location.state.newsData.urls || '';
