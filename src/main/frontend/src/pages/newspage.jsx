@@ -8,6 +8,7 @@ function NewsPage() {
   const location = useLocation();
   const [newsData, setNewsData] = useState(null);
   const [relatedNewsLinks, setRelatedNewsLinks] = useState([]);
+  const [keywords, setKeywords] = useState([]); // 키워드 상태 추가
 
   // 전달받은 뉴스 데이터 처리
   useEffect(() => {
@@ -26,8 +27,46 @@ function NewsPage() {
       const urls = location.state.newsData.urls || '';
       
       processRelatedNews(press, urls);
+      
+      // 키워드 데이터 파싱 추가
+      processKeywords(location.state.newsData.keywords);
     }
   }, [location]);
+  
+  // 키워드 데이터를 처리하는 함수
+  const processKeywords = (keywordsStr) => {
+    if (!keywordsStr) {
+      setKeywords([]);
+      return;
+    }
+    
+    try {
+      // JSON 형식의 키워드 파싱 (["키워드1","키워드2",...])
+      let parsedKeywords = [];
+      
+      if (typeof keywordsStr === 'string') {
+        keywordsStr = keywordsStr.trim();
+        
+        if (keywordsStr.startsWith('[') && keywordsStr.endsWith(']')) {
+          // JSON 배열 형태의 문자열 파싱
+          const keywordArray = JSON.parse(keywordsStr);
+          parsedKeywords = keywordArray.filter(kw => kw && kw.trim() !== '');
+        } else {
+          // 쉼표로 구분된 문자열 파싱
+          parsedKeywords = keywordsStr.split(',')
+            .map(k => k.trim())
+            .filter(k => k !== '');
+        }
+      }
+      
+      console.log("파싱된 키워드:", parsedKeywords);
+      setKeywords(parsedKeywords);
+    } catch (error) {
+      console.error("키워드 파싱 중 오류 발생:", error);
+      // 파싱 실패 시 빈 배열 설정
+      setKeywords([]);
+    }
+  };
   
   // press와 urls 데이터를 처리하는 함수
   const processRelatedNews = (press, urls) => {
@@ -133,20 +172,44 @@ function NewsPage() {
             </div>
           )}
         </div>
-        <div className="listBox">
-          <h4> 관련 뉴스 바로가기 </h4>
-          {relatedNewsLinks.length > 0 ? (
-            relatedNewsLinks.map((item, index) => (
-              <li key={index}>
-                <a href={item.url} target="_blank" rel="noopener noreferrer">
-                  {index + 1}. {item.word}
-                  <span className="desktopOnly"> : {item.url}</span>
-                </a>
-              </li>
-            ))
-          ) : (
-            <li>관련 뉴스 정보가 없습니다.</li>
-          )}
+        <div className="listBoxContainer" style={{ display: "flex", gap: "20px" }}>
+          <div className="listBox" style={{ flex: 1 }}>
+            <h4> 관련 뉴스 바로가기 </h4>
+            {relatedNewsLinks.length > 0 ? (
+              relatedNewsLinks.map((item, index) => (
+                <li key={index}>
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    {index + 1}. {item.word}
+                    <span className="desktopOnly"> : {item.url}</span>
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>관련 뉴스 정보가 없습니다.</li>
+            )}
+          </div>
+          
+          <div className="keywordListBox" style={{ flex: 1 }}>
+            <h4> 뉴스 키워드 </h4>
+            {keywords.length > 0 ? (
+              <div className="keywordContainer">
+                {keywords.map((keyword, index) => (
+                  <div key={index} className="keyword" style={{ 
+                    display: "inline-block", 
+                    margin: "5px",
+                    padding: "5px 10px",
+                    background: "#f0f0f0",
+                    borderRadius: "15px",
+                    fontSize: "14px"
+                  }}>
+                    {keyword}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <li>키워드 정보가 없습니다.</li>
+            )}
+          </div>
         </div>
       </div>
     </>
