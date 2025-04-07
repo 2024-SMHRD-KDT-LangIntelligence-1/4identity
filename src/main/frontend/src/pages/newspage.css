@@ -45,15 +45,44 @@
     color: #333;
 }
 
+.listBoxContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    margin: 2% auto;
+    width: 100%;
+}
+
 .listBox {
-    width: 70%;
-    margin: auto;
-    padding: 3% 7%;
-    font-size: 14px;
+    width: 35%;
+    font-size: 15px;
+}
+
+.keywordListBox {
+    width: 20%;
+    font-size: 15px; 
+}
+
+.keywordContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.keyword {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 7px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
 }
 
 .listBox li {
-    display: flex;
+    display: inline;
     list-style: none;
     margin-bottom: 5px;
 }
