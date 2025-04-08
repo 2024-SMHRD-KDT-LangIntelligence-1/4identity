@@ -106,16 +106,10 @@
     <td align="center"><strong>최윤진</strong></td>
   </tr>
   <tr>
-    <td align="center"><b>Main</b></td>
-    <td align="center"><b>Main</b></td>
-    <td align="center"><b>Main</b></td>
-    <td align="center"><b>Main</b></td>
-  </tr>
-  <tr>
-    <td align="center">DB</td>
-    <td align="center">Back-End</td>
-    <td align="center">Modeling</td>
-    <td align="center">PM</td>
+    <td align="center"><b>DB</b></td>
+    <td align="center"><b>Back-End</b></td>
+    <td align="center"><b>Modeling</b></td>
+    <td align="center"><b>PM</b></td>
   </tr>
   <tr>
     <td align="center">1. 모델 학습용 뉴스 데이터 수집<br>2. DB 설계 및 구축</td>
@@ -130,13 +124,13 @@
     <td align="center"><b>Sub</b></td>
   </tr>
   <tr>
-    <td align="center">Back-End</td>
+    <td align="center">Back-End, Server</td>
     <td align="center">Modeling</td>
     <td align="center">Back-End</td>
     <td align="center">Front-End</td>
   </tr>
   <tr>
-    <td align="center">1. 최신 뉴스 수집 및 API 서버 구현<br>2. 메인 서버, API 서버 연동</td>
+    <td align="center">1. 최신 뉴스 수집 및 API 서버 구현<br>2. 메인 서버, API 서버 연동<br>2. </td>
     <td align="center">1. </td>
     <td align="center">1. </td>
     <td align="center">1. </td>
