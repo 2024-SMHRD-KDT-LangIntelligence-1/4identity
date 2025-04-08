@@ -60,6 +60,11 @@ public class UserController {
             String userEmail = registerRequest.get("userEmail");
             String userInterest = registerRequest.get("userInterest");
             
+            // "정책 및 법률"을 "정책 & 법률"로 변환
+            if (userInterest != null && userInterest.equals("정책 및 법률")) {
+                userInterest = "정책 & 법률";
+            }
+            
             if (userId == null || userPw == null || userEmail == null) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("success", false);
@@ -210,6 +215,11 @@ public class UserController {
             String newPassword = updateRequest.get("newPassword");
             String userEmail = updateRequest.get("userEmail");
             String userInterest = updateRequest.get("userInterest");
+            
+            // "정책 및 법률"을 "정책 & 법률"로 변환
+            if (userInterest != null && userInterest.equals("정책 및 법률")) {
+                userInterest = "정책 & 법률";
+            }
             
             // 사용자 존재 확인
             Optional<User> userOpt = userService.getUserById(userId);

@@ -314,6 +314,11 @@ public class NewsService {
         }
         
         try {
+            // "정책 및 법률"을 "정책 & 법률"로 변환
+            if (userInterest.equals("정책 및 법률")) {
+                userInterest = "정책 & 법률";
+            }
+            
             // 사용자 관심사에 맞는 뉴스 검색
             List<News> matchedNews;
             
@@ -322,6 +327,7 @@ public class NewsService {
                 List<String> categories = Arrays.stream(userInterest.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
+                    .map(s -> s.equals("정책 및 법률") ? "정책 & 법률" : s) // 각 카테고리에 대해 변환 적용
                     .collect(Collectors.toList());
                 
                 log.info("사용자가 여러 관심사를 가지고 있습니다: {}", categories);

@@ -20,13 +20,28 @@ function Header() {
   }, [isLoggedIn, userId, userInterest]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  
+  // 로고 클릭 핸들러 추가 - 홈으로 이동 후 페이지 새로고침
+  const handleLogoClick = () => {
+    // 현재 경로가 이미 홈('/')인 경우 새로고침만 수행
+    if (window.location.pathname === '/') {
+      window.location.reload();
+    } else {
+      // 다른 페이지에 있는 경우 홈으로 이동 (이동 후 자동으로 페이지가 로드됨)
+      navigate("/");
+    }
+  };
 
   return (
     <>
       <header className="header">
         <div className="headerBox">
-          <div className="logo" onClick={() => navigate("/")}>
-            4identity
+          <div 
+            className="logo" 
+            onClick={handleLogoClick}
+            style={{ cursor: 'pointer' }} // 커서 스타일을 포인터로 변경
+          >
+            TinkOn
           </div>
 
           <div className="rightSide">

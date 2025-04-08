@@ -26,7 +26,7 @@ function SignUpPage() {
   const [categoryNames] = useState([
     "산업 및 트렌드",
     "소비자 기술·제품 리뷰",
-    "정책 및 법률",
+    "정책 & 법률",
     "기업 및 브랜드",
     "미래 기술·혁신",
   ]);
@@ -273,7 +273,7 @@ function SignUpPage() {
               className={selectedCategory === 2 ? "selected" : ""}
               onClick={() => handleCategoryClick(2)}
             >
-              정책 및 법률
+              정책 & 법률
             </div>
             <div
               className={selectedCategory === 3 ? "selected" : ""}

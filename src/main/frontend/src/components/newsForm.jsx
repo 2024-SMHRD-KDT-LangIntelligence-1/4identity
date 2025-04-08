@@ -102,6 +102,170 @@ function NewsForm({ selectedDate }) {
     }
   }, []);
 
+  // localStorage 변경을 감지하는 이벤트 리스너
+  useEffect(() => {
+    console.log("[NewsForm] localStorage 변경 감지 이벤트 리스너 설정");
+    
+    // localStorage 변경 감지 함수
+    const handleStorageChange = (e) => {
+      console.log(`[NewsForm] localStorage 변경 감지: ${e.key}`);
+      if (e.key === "userInfo" || e.key === null) {
+        console.log("[NewsForm] 사용자 정보 변경 감지, 상태 갱신");
+        const status = checkLoginStatus();
+        
+        // 변경된 관심사로 데이터 다시 로드
+        if (status.isLoggedIn && status.userInterest) {
+          console.log("[NewsForm] 새 관심사로 데이터 다시 로드:", status.userInterest);
+          // 관심사 뉴스 로딩 상태 초기화
+          setInterestLoading(true);
+          setInterestError(null);
+          
+          fetchUserInterestNews(status.userInterest);
+        }
+      }
+    };
+    
+    // 이벤트 리스너 추가
+    window.addEventListener('storage', handleStorageChange);
+    
+    // 컴포넌트가 마운트될 때도 직접 확인 (같은 탭에서 변경된 경우)
+    const checkLocalUserInfo = () => {
+      const userIdInStorage = localStorage.getItem("userId");
+      
+      if (userIdInStorage) {
+        // API로 최신 사용자 정보 가져오기
+        fetchUserProfileAndUpdateCache(userIdInStorage);
+      }
+    };
+    
+    // 처음 마운트될 때 사용자 정보 확인
+    checkLocalUserInfo();
+    
+    // 클린업 함수
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [checkLoginStatus]);
+  
+  // 사용자 프로필 정보를 API로 가져와서 localStorage 업데이트
+  const fetchUserProfileAndUpdateCache = async (userId) => {
+    try {
+      console.log(`[NewsForm] 사용자 ID ${userId}의 최신 프로필 정보 요청`);
+      const response = await axios.get(`/api/users/profile/${userId}`);
+      
+      if (response.data.success) {
+        console.log("[NewsForm] 프로필 정보 가져오기 성공:", response.data);
+        
+        // 현재 캐시된 데이터와 새 데이터 비교
+        const currentCache = localStorage.getItem("userInfo");
+        let shouldUpdate = false;
+        
+        if (currentCache) {
+          try {
+            const currentData = JSON.parse(currentCache);
+            shouldUpdate = currentData.userInterest !== response.data.userInterest;
+            
+            if (shouldUpdate) {
+              console.log("[NewsForm] 관심사 변경 감지:", 
+                          currentData.userInterest, "->", response.data.userInterest);
+            }
+          } catch (e) {
+            console.error("[NewsForm] 캐시 파싱 오류:", e);
+            shouldUpdate = true;
+          }
+        } else {
+          shouldUpdate = true;
+        }
+        
+        if (shouldUpdate) {
+          // localStorage 업데이트
+          const newUserInfo = {
+            userId: response.data.userId,
+            userEmail: response.data.userEmail,
+            userInterest: response.data.userInterest,
+            isLoggedIn: true
+          };
+          
+          localStorage.setItem("userInfo", JSON.stringify(newUserInfo));
+          console.log("[NewsForm] localStorage 사용자 정보 업데이트");
+          
+          // 상태 업데이트
+          setIsLoggedIn(true);
+          setUserInterest(response.data.userInterest);
+          
+          // 새 관심사로 데이터 다시 로드
+          if (response.data.userInterest) {
+            fetchUserInterestNews(response.data.userInterest);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("[NewsForm] 사용자 프로필 가져오기 오류:", error);
+    }
+  };
+  
+  // 관심사에 맞는 뉴스를 가져오는 함수 (재사용을 위해 분리)
+  const fetchUserInterestNews = async (interest) => {
+    if (!interest) {
+      console.log("[NewsForm] 관심사가 없어 뉴스를 가져오지 않습니다");
+      setInterestLoading(false);
+      setUserInterestNews([]);
+      setUserInterestNewsData([]);
+      return;
+    }
+    
+    try {
+      setInterestLoading(true);
+      setInterestError(null);
+  
+      // 선택된 날짜 사용 (props로 전달받음)
+      // 날짜가 없으면 현재 날짜를 사용
+      const dateToUse = selectedDate || new Date().toISOString().split('T')[0];
+  
+      // URL에 직접 쿼리 파라미터 포함 (params 객체 대신)
+      const encodedInterest = encodeURIComponent(interest);
+      const apiUrl = `http://localhost:8082/api/news/byUserInterest?date=${dateToUse}&userInterest=${encodedInterest}`;
+  
+      console.log(`[NewsForm] 사용자 관심사 뉴스 API 요청 URL: ${apiUrl}`);
+  
+      // 사용자 관심사에 맞는 뉴스 데이터 요청 - 직접 URL에 파라미터 추가
+      const response = await axios.get(apiUrl);
+  
+      console.log("[NewsForm] 사용자 관심사 뉴스 응답:", response.data);
+  
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        // 유효한 뉴스 데이터 필터링
+        const validNewsData = response.data.filter(
+          news => news && news.titles && news.titles.trim() !== ''
+        );
+  
+        // 뉴스 제목만 추출하여 상태 업데이트
+        const interestNewsTitles = validNewsData.map(news => news.titles);
+  
+        console.log("[NewsForm] 표시할 사용자 관심사 뉴스 제목:", interestNewsTitles);
+        console.log("[NewsForm] 사용자 관심사 뉴스 전체 데이터:", validNewsData);
+  
+        setUserInterestNews(interestNewsTitles);
+        setUserInterestNewsData(validNewsData); // 전체 데이터 저장
+      } else {
+        console.log("[NewsForm] 사용자 관심사에 맞는 뉴스가 없습니다");
+        setUserInterestNews([]);
+        setUserInterestNewsData([]);
+      }
+    } catch (error) {
+      console.error("[NewsForm] 사용자 관심사 뉴스 가져오기 실패:", error);
+      if (error.response) {
+        console.error("[NewsForm] 에러 응답 상태:", error.response.status);
+        console.error("[NewsForm] 에러 응답 데이터:", error.response.data);
+      }
+      setInterestError(error.message);
+      setUserInterestNews([]);
+      setUserInterestNewsData([]);
+    } finally {
+      setInterestLoading(false);
+    }
+  };
+
   // 컴포넌트 마운트 시 한 번만 실행
   useEffect(() => {
     console.log("[NewsForm] 초기화 useEffect 실행");
@@ -207,78 +371,19 @@ function NewsForm({ selectedDate }) {
       return;
     }
 
-    const fetchUserInterestNews = async () => {
-      console.log("[NewsForm] 관심사 뉴스 요청 검토 - isLoggedIn:", isLoggedIn, "userInterest:", userInterest);
+    console.log("[NewsForm] 관심사 뉴스 요청 검토 - isLoggedIn:", isLoggedIn, "userInterest:", userInterest);
 
-      // 사용자 관심사나 선택 날짜가 없으면 요청하지 않음
-      if (!userInterest || !isLoggedIn) {
-        console.log("[NewsForm] 사용자 관심사가 없거나 로그인 상태가 아니어서 관심사 뉴스를 가져오지 않습니다");
-        setInterestLoading(false);
-        setUserInterestNews([]);
-        setUserInterestNewsData([]);
-        return;
-      }
+    // 사용자 관심사나 선택 날짜가 없으면 요청하지 않음
+    if (!userInterest || !isLoggedIn) {
+      console.log("[NewsForm] 사용자 관심사가 없거나 로그인 상태가 아니어서 관심사 뉴스를 가져오지 않습니다");
+      setInterestLoading(false);
+      setUserInterestNews([]);
+      setUserInterestNewsData([]);
+      return;
+    }
 
-      try {
-        setInterestLoading(true);
-        setInterestError(null);
-
-        // 선택된 날짜 사용 (props로 전달받음)
-        // 날짜가 없으면 현재 날짜를 사용
-        const dateToUse = selectedDate || new Date().toISOString().split('T')[0];
-
-        // URL에 직접 쿼리 파라미터 포함 (params 객체 대신)
-        const encodedInterest = encodeURIComponent(userInterest);
-        const apiUrl = `http://localhost:8082/api/news/byUserInterest?date=${dateToUse}&userInterest=${encodedInterest}`;
-
-        console.log(`[NewsForm] 사용자 관심사 뉴스 API 요청 URL: ${apiUrl}`);
-
-        // 사용자 관심사에 맞는 뉴스 데이터 요청 - 직접 URL에 파라미터 추가
-        const response = await axios.get(apiUrl);
-
-        console.log("[NewsForm] 사용자 관심사 뉴스 응답:", response.data);
-
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          // 유효한 뉴스 데이터 필터링
-          const validNewsData = response.data.filter(
-            news => news && news.titles && news.titles.trim() !== ''
-          );
-
-          // 뉴스 제목만 추출하여 상태 업데이트
-          const interestNewsTitles = validNewsData.map(news => news.titles);
-
-          console.log("[NewsForm] 표시할 사용자 관심사 뉴스 제목:", interestNewsTitles);
-          console.log("[NewsForm] 사용자 관심사 뉴스 전체 데이터:", validNewsData);
-
-          setUserInterestNews(interestNewsTitles);
-          setUserInterestNewsData(validNewsData); // 전체 데이터 저장
-        } else {
-          console.log("[NewsForm] 사용자 관심사에 맞는 뉴스가 없습니다");
-          setUserInterestNews([]);
-          setUserInterestNewsData([]);
-        }
-      } catch (error) {
-        console.error("[NewsForm] 사용자 관심사 뉴스 가져오기 실패:", error);
-        if (error.response) {
-          console.error("[NewsForm] 에러 응답 상태:", error.response.status);
-          console.error("[NewsForm] 에러 응답 데이터:", error.response.data);
-          console.error("[NewsForm] 요청 URL:", error.config.url);
-          console.error("[NewsForm] 요청 메서드:", error.config.method);
-          console.error("[NewsForm] 요청 헤더:", error.config.headers);
-        } else if (error.request) {
-          console.error("[NewsForm] 요청은 전송되었으나 응답을 받지 못함:", error.request);
-        } else {
-          console.error("[NewsForm] 에러 메시지:", error.message);
-        }
-        setInterestError(error.message);
-        setUserInterestNews([]);
-        setUserInterestNewsData([]);
-      } finally {
-        setInterestLoading(false);
-      }
-    };
-
-    fetchUserInterestNews();
+    // 함수 호출
+    fetchUserInterestNews(userInterest);
   }, [userInterest, selectedDate, isLoggedIn, initialized]);
 
   // 사용자 관심사 표시용 이름 포맷팅
@@ -288,9 +393,19 @@ function NewsForm({ selectedDate }) {
 
     if (!interest) return "관심 카테고리";
 
+    // "정책 및 법률"을 "정책 & 법률"로 변환
+    if (interest === "정책 및 법률") {
+      return "정책 & 법률";
+    }
+
     // 첫 번째 관심사만 표시 (콤마로 구분된 경우)
     if (interest.includes(",")) {
-      return interest.split(",")[0].trim();
+      let firstInterest = interest.split(",")[0].trim();
+      // 분리된 첫 번째 관심사에 대해서도 "정책 및 법률" -> "정책 & 법률" 변환
+      if (firstInterest === "정책 및 법률") {
+        return "정책 & 법률";
+      }
+      return firstInterest;
     }
 
     return interest.trim();

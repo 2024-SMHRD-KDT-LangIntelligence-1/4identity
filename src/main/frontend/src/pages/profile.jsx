@@ -39,7 +39,7 @@ function ProfilePage() {
   const [categoryNames] = useState([
     "산업 및 트렌드",
     "소비자 기술·제품 리뷰",
-    "정책 및 법률",
+    "정책 & 법률",
     "기업 및 브랜드",
     "미래 기술·혁신"
   ]);
@@ -163,6 +163,32 @@ function ProfilePage() {
       
       if (response.data.success) {
         setSuccessMessage("프로필이 성공적으로 업데이트되었습니다.");
+        
+        // 중요: 프로필 업데이트 성공 시 localStorage의 userInfo 업데이트
+        const currentUserInfo = localStorage.getItem("userInfo");
+        if (currentUserInfo) {
+          try {
+            const userInfoObj = JSON.parse(currentUserInfo);
+            userInfoObj.userEmail = fullEmail;
+            userInfoObj.userInterest = userInterest;
+            
+            // 업데이트된 정보 저장
+            localStorage.setItem("userInfo", JSON.stringify(userInfoObj));
+            console.log("localStorage userInfo 업데이트 완료:", userInfoObj);
+            
+            // 다른 탭에 변경 알림을 위해 storage 이벤트 발생시키기
+            const storageEvent = new StorageEvent('storage', {
+              key: 'userInfo',
+              newValue: JSON.stringify(userInfoObj),
+              oldValue: currentUserInfo,
+              storageArea: localStorage
+            });
+            window.dispatchEvent(storageEvent);
+          } catch (e) {
+            console.error("localStorage userInfo 업데이트 실패:", e);
+          }
+        }
+        
         // 폼 초기화
         setFormData({
           ...formData,
@@ -352,7 +378,7 @@ function ProfilePage() {
                 <div 
                   className={selectedCategory === 2 ? "selected" : ""} 
                   onClick={() => handleCategoryClick(2)}
-                > 정책 및 법률 </div>
+                > 정책 & 법률 </div>
                 <div 
                   className={selectedCategory === 3 ? "selected" : ""} 
                   onClick={() => handleCategoryClick(3)}

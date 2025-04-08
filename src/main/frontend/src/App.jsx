@@ -6,7 +6,7 @@ import LoginPage from "./pages/login.jsx";
 import Home from "./pages/home.jsx";
 import ProfilePage from "./pages/profile.jsx";
 import NewsPage from "./pages/newspage.jsx";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 // 사용자 정보 Context 생성
@@ -20,6 +20,7 @@ export const UserContext = createContext({
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 위치 정보 가져오기
   const [userState, setUserState] = useState({
     isLoggedIn: false,
     userId: "",
@@ -46,8 +47,9 @@ function App() {
     }));
   };
 
-  // 로그아웃 함수
+  // 로그아웃 함수 개선
   const logout = () => {
+    // localStorage에서 사용자 정보 제거
     localStorage.removeItem("userId");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userInterest");
@@ -61,7 +63,19 @@ function App() {
       userInterest: ""
     });
     
-    navigate("/");
+    // 현재 경로 확인 및 적절한 리다이렉션 처리
+    const currentPath = location.pathname;
+    
+    if (currentPath === "/") {
+      // 홈페이지에서 로그아웃한 경우, 페이지 새로고침
+      console.log("홈페이지에서 로그아웃: 페이지 새로고침 실행");
+      navigate("/", { replace: true });
+      window.location.reload();
+    } else {
+      // 다른 페이지에서 로그아웃한 경우, 홈페이지로 이동
+      console.log("다른 페이지에서 로그아웃: 홈페이지로 이동");
+      navigate("/", { replace: true });
+    }
   };
 
   // 앱 초기화시 localStorage에서 사용자 정보 복원
