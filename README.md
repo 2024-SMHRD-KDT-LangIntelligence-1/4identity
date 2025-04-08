@@ -8,7 +8,9 @@
 2025.03.14 ~ 2025.04.09
 
 ## ⭐ 주요 기능
-* 허위성·낚시성 뉴스 구분
+* 뉴스 수집
+* 뉴스 카테고리별 분리 및 전처리
+* 가짜 뉴스 분리
 * 핵심 키워드 추출
 * 뉴스 요약
 
@@ -141,9 +143,9 @@
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Kim-Seon-Bin" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/YoutubeOfficer" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/dokyeongman" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/082918" target='_blank'>github</a></td>
   </tr>
 </table>
 
