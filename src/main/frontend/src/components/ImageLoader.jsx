@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import './ImageLoader.css';
 
 // 전역 이미지 캐시 (컴포넌트 간 공유)
 const imageCache = new Map();
 
-// 기본 대체 이미지 URL
-const DEFAULT_FALLBACK = "https://via.placeholder.com/400x200?text=No+Image+Available";
+// Base64로 인코딩된 간단한 "No Image" 이미지 (외부 URL 의존성 제거)
+const BASE64_FALLBACK_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZWVlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbW5pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
+// 기본 대체 이미지 - 외부 URL 대신 Base64 이미지 사용
+const DEFAULT_FALLBACK = BASE64_FALLBACK_IMAGE;
+
+// 외부로 내보내서 다른 컴포넌트에서도 사용할 수 있게 함
+export const FALLBACK_IMAGE = DEFAULT_FALLBACK;
 
 /**
  * 이미지 로딩 및 오류 처리를 위한 컴포넌트
@@ -29,14 +36,23 @@ const ImageLoader = ({
   // 이미지 오류 상태
   const [error, setError] = useState(false);
   
-  // 이미지 URL 유효성 확인 함수
+  // 이미지 URL 유효성 확인 함수 개선
   const isValidUrl = (url) => {
     if (!url) return false;
-    return (
-      url.startsWith('http://') || 
-      url.startsWith('https://') || 
-      url.startsWith('data:image/')
-    );
+    
+    // HTTP/HTTPS URL 검사
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return true;
+    }
+    
+    // Base64 이미지 검사 - 실제 데이터가 포함되어 있는지 확인
+    if (url.startsWith('data:image/')) {
+      // data:image/jpeg;base64, 형식이고 그 뒤에 실제 데이터가 있는지 확인
+      const parts = url.split('base64,');
+      return parts.length === 2 && parts[1].length > 0;
+    }
+    
+    return false;
   };
   
   // 이미지 로드 오류 처리 함수
@@ -44,6 +60,7 @@ const ImageLoader = ({
     console.warn(`이미지 로드 실패: ${src}`);
     setError(true);
     setImgSrc(fallbackSrc);
+    setLoading(false);
   };
   
   // 이미지 로드 완료 처리 함수
@@ -53,14 +70,26 @@ const ImageLoader = ({
   
   // 지연 로딩 및 캐싱 처리
   useEffect(() => {
+    // 초기화 및 유효성 검사
     if (!src) {
+      console.log("이미지 소스가 없음, 대체 이미지 사용");
       setImgSrc(fallbackSrc);
+      setLoading(false);
+      return;
+    }
+    
+    // 대체 이미지 URL과 동일한 경우 바로 반환 (무한 루프 방지)
+    if (src === DEFAULT_FALLBACK || src === fallbackSrc) {
+      setImgSrc(src);
+      setLoading(false);
       return;
     }
     
     // 유효하지 않은 URL이면 대체 이미지 사용
     if (!isValidUrl(src)) {
+      console.warn(`유효하지 않은 이미지 URL: ${src}`);
       setImgSrc(fallbackSrc);
+      setLoading(false);
       return;
     }
     
@@ -76,8 +105,15 @@ const ImageLoader = ({
     
     // 이미지 프리로딩 (이미지 유효성 검사)
     const preloadImage = () => {
+      // Base64 이미지인 경우 바로 설정 (추가 검증은 이미 isValidUrl에서 수행됨)
+      if (src.startsWith('data:image/')) {
+        imageCache.set(src, true);
+        setImgSrc(src);
+        setLoading(false);
+        return;
+      }
+      
       const img = new Image();
-      img.src = src;
       
       img.onload = () => {
         imageCache.set(src, true);
@@ -89,7 +125,11 @@ const ImageLoader = ({
         console.warn(`이미지 프리로드 실패: ${src}`);
         setImgSrc(fallbackSrc);
         setError(true);
+        setLoading(false);
       };
+      
+      // 마지막에 src 설정 (이벤트 핸들러 등록 후)
+      img.src = src;
     };
     
     if (lazyLoad) {

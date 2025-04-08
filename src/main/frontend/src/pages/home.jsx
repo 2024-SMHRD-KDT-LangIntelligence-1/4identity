@@ -5,7 +5,7 @@ import NewsForm from "../components/newsForm.jsx";
 import "../pages/index.css";
 import axios from "axios";
 import { UserContext } from "../App";
-import ImageLoader from "../components/ImageLoader.jsx"; // 새로운 ImageLoader 컴포넌트 가져오기
+import ImageLoader, { FALLBACK_IMAGE } from "../components/ImageLoader.jsx"; // FALLBACK_IMAGE 추가 임포트
 import "../components/ImageLoader.css"; // ImageLoader.css 가져오기 추가
 
 function Home() {
@@ -44,13 +44,23 @@ function Home() {
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
-  // 이미지 URL 체크 함수 추가
+  // 이미지 URL 체크 함수 개선
   const isValidImageUrl = (url) => {
-    return url && url.trim() !== '' && (
-      url.startsWith('http://') || 
-      url.startsWith('https://') || 
-      url.startsWith('data:image/')
-    );
+    if (!url) return false;
+    
+    // HTTP/HTTPS URL 검사
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return true;
+    }
+    
+    // Base64 이미지 검사 - 실제 데이터가 포함되어 있는지 확인
+    if (url.startsWith('data:image/')) {
+      // data:image/jpeg;base64, 형식이고 그 뒤에 실제 데이터가 있는지 확인
+      const parts = url.split('base64,');
+      return parts.length === 2 && parts[1].length > 0;
+    }
+    
+    return false;
   };
   
   // 이미지 URL 처리 함수 개선
@@ -58,17 +68,26 @@ function Home() {
     if (!imageUrls) return fallbackImageUrl;
     
     try {
-      // 쉼표로 분리된 URL 중 첫 번째만 사용
-      const firstUrl = imageUrls.split(',')[0].trim();
-      return isValidImageUrl(firstUrl) ? firstUrl : fallbackImageUrl;
+      // 쉼표로 분리된 URL 배열 생성
+      const urls = imageUrls.split(',').map(url => url.trim()).filter(url => url !== '');
+      
+      // 유효한 첫 번째 URL 찾기
+      for (const url of urls) {
+        if (isValidImageUrl(url)) {
+          return url;
+        }
+      }
+      
+      // 유효한 URL이 없으면 대체 이미지 사용
+      return fallbackImageUrl;
     } catch (e) {
       console.error("이미지 URL 처리 중 오류:", e);
       return fallbackImageUrl;
     }
   };
   
-  // 대체 이미지 URL
-  const fallbackImageUrl = "https://via.placeholder.com/400x200?text=No+Image+Available";
+  // 대체 이미지 URL을 ImageLoader에서 가져온 Base64 이미지로 업데이트
+  const fallbackImageUrl = FALLBACK_IMAGE;
   
   // 날짜에 따른 뉴스 데이터 가져오기
   useEffect(() => {
@@ -169,7 +188,7 @@ function Home() {
                 ) : selectNews ? (
                   <>
                     <div className="newsImageContainer">
-                      {/* ImageLoader 컴포넌트 설정 개선 */}
+                      {/* ImageLoader 컴포넌트로 이미지 처리 개선 */}
                       <ImageLoader 
                         src={getFirstImageUrl(selectNews.images)}
                         alt={selectNews.titles || '뉴스 이미지'}

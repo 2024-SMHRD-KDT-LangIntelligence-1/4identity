@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import "./newspage.css";
 import Header from "../components/bar";
 import { FaCircleCheck } from "react-icons/fa6"; // 아이콘 (npm install react-icons --save)
+import { FALLBACK_IMAGE } from "../components/ImageLoader.jsx"; // 대체 이미지 가져오기
 
 function NewsPage() {
   const location = useLocation();
@@ -140,16 +141,15 @@ function NewsPage() {
     );
   };
 
-  // 이미지 URL 처리 함수
+  // 이미지 URL 처리 함수 - Base64 대체 이미지 사용하도록 수정
   const getFirstImageUrl = (imageUrls) => {
-    if (!imageUrls)
-      return "https://via.placeholder.com/400x150?text=No+Image+Available";
+    if (!imageUrls) return FALLBACK_IMAGE;
 
     // 쉼표로 분리된 URL 중 첫 번째만 사용
     const firstUrl = imageUrls.split(",")[0].trim();
     return isValidImageUrl(firstUrl)
       ? firstUrl
-      : "https://via.placeholder.com/400x150?text=No+Image+Available";
+      : FALLBACK_IMAGE;
   };
 
   return (

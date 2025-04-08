@@ -43,8 +43,11 @@ public class ImageService {
     private static final int DEFAULT_WIDTH = 400;
     private static final int DEFAULT_HEIGHT = 200;
     
-    // 대체 이미지 URL (유효하지 않은 이미지 URL 대신 사용)
-    private static final String FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x200?text=No+Image+Available";
+    // Base64로 인코딩된 대체 이미지 (DNS 해결 오류 방지)
+    private static final String BASE64_FALLBACK_IMAGE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2VlZWVlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==";
+    
+    // 대체 이미지 URL (유효하지 않은 이미지 URL 대신 사용) - Base64 이미지로 교체
+    private static final String FALLBACK_IMAGE_URL = BASE64_FALLBACK_IMAGE;
     
     // 디스크 캐시 파일 경로
     @Value("${app.image-cache.path:./image-cache}")
@@ -163,71 +166,117 @@ public class ImageService {
         
         try {
             // 첫 번째 URL만 사용 (콤마로 구분된 경우)
-            String imageUrl = imageUrls.split(",")[0].trim();
+            String[] urls = imageUrls.split(",");
             
-            // URL 유효성 검사
-            if (!isValidImageUrl(imageUrl)) {
-                return FALLBACK_IMAGE_URL;
-            }
-            
-            // CORS 문제가 있는 도메인인지 확인 (예: 일부 뉴스 사이트)
-            if (hasCorsIssue(imageUrl)) {
-                return proxyImage(imageUrl);
-            }
-            
-            // 이미 처리에 실패한 URL인지 확인
-            if (isFailedUrl(imageUrl)) {
-                return FALLBACK_IMAGE_URL;
-            }
-            
-            // 캐시에서 이미지 URL 확인
-            String cachedUrl = imageCache.getIfPresent(imageUrl);
-            if (cachedUrl != null) {
-                return cachedUrl;
-            }
-            
-            // 이미지 URL에 접근하여 유효성 테스트
-            HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(2000); // 2초 타임아웃
-            connection.setReadTimeout(2000);
-            
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                log.warn("이미지 URL 접근 불가 (응답 코드: {}): {}", responseCode, imageUrl);
-                addFailedUrl(imageUrl);
-                return FALLBACK_IMAGE_URL;
-            }
-            
-            // 이미지 크기가 큰 경우 Base64로 인코딩하여 리사이징
-            if (isLargeImage(connection)) {
-                String optimizedImage = resizeAndOptimizeImage(imageUrl);
-                if (optimizedImage != null) {
-                    imageCache.put(imageUrl, optimizedImage);
-                    return optimizedImage;
+            // 모든 URL 시도
+            for (String imageUrl : urls) {
+                imageUrl = imageUrl.trim();
+                
+                // URL이 비어있으면 다음 URL 시도
+                if (imageUrl.isEmpty()) continue;
+                
+                // 이미 Base64로 인코딩된 이미지인 경우 유효성 검사
+                if (imageUrl.startsWith("data:image/")) {
+                    if (isValidImageUrl(imageUrl)) {
+                        return imageUrl;
+                    } else {
+                        continue; // 유효하지 않은 Base64 이미지는 건너뛰고 다음 URL 시도
+                    }
+                }
+                
+                // URL 유효성 검사
+                if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                    continue;
+                }
+                
+                // 이미 처리에 실패한 URL인지 확인
+                if (isFailedUrl(imageUrl)) {
+                    continue;
+                }
+                
+                // 캐시에서 이미지 URL 확인
+                String cachedUrl = imageCache.getIfPresent(imageUrl);
+                if (cachedUrl != null) {
+                    // 캐시된 URL의 유효성 검사
+                    if (isValidImageUrl(cachedUrl)) {
+                        return cachedUrl;
+                    } else {
+                        // 캐시에서 제거 후 다시 처리
+                        imageCache.invalidate(imageUrl);
+                    }
+                }
+                
+                try {
+                    // 이미지 URL에 접근하여 유효성 테스트
+                    HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
+                    connection.setRequestMethod("HEAD");
+                    connection.setConnectTimeout(2000); // 2초 타임아웃
+                    connection.setReadTimeout(2000);
+                    
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode != HttpURLConnection.HTTP_OK) {
+                        continue; // 다음 URL 시도
+                    }
+                    
+                    // CORS 문제가 있는 도메인인지 확인 (예: 일부 뉴스 사이트)
+                    if (hasCorsIssue(imageUrl)) {
+                        String proxiedUrl = proxyImage(imageUrl);
+                        if (!proxiedUrl.equals(FALLBACK_IMAGE_URL)) {
+                            return proxiedUrl;
+                        }
+                        continue; // 다음 URL 시도
+                    }
+                    
+                    // 이미지 크기가 큰 경우 Base64로 인코딩하여 리사이징
+                    if (isLargeImage(connection)) {
+                        String optimizedImage = resizeAndOptimizeImage(imageUrl);
+                        if (optimizedImage != null) {
+                            imageCache.put(imageUrl, optimizedImage);
+                            return optimizedImage;
+                        }
+                    }
+                    
+                    // 표준 크기 이미지는 원본 URL 그대로 사용
+                    imageCache.put(imageUrl, imageUrl);
+                    return imageUrl;
+                } catch (Exception e) {
+                    // 현재 URL 처리 실패, 다음 URL 시도
+                    log.warn("이미지 URL 처리 실패: {}, 오류: {}", imageUrl, e.getMessage());
+                    addFailedUrl(imageUrl);
+                    continue;
                 }
             }
             
-            // 표준 크기 이미지는 원본 URL 그대로 사용
-            imageCache.put(imageUrl, imageUrl);
-            return imageUrl;
+            // 모든 URL 처리 실패 시 대체 이미지 반환
+            return FALLBACK_IMAGE_URL;
             
         } catch (Exception e) {
             log.error("이미지 처리 중 오류 발생: {}", e.getMessage());
-            addFailedUrl(imageUrls.split(",")[0].trim());
             return FALLBACK_IMAGE_URL;
         }
     }
     
     /**
-     * 이미지 URL 유효성 검사
+     * 이미지 URL 유효성 검사 개선
      */
     private boolean isValidImageUrl(String url) {
-        return url != null && (
-            url.startsWith("http://") || 
-            url.startsWith("https://") || 
-            url.startsWith("data:image/")
-        );
+        if (url == null || url.trim().isEmpty()) {
+            return false;
+        }
+        
+        // HTTP/HTTPS URL 검사
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return true;
+        }
+        
+        // Base64 이미지 검사 - 실제 데이터가 포함되어 있는지 확인
+        if (url.startsWith("data:image/")) {
+            // 콤마 뒤에 실제 Base64 데이터가 있는지 확인
+            String[] parts = url.split("base64,");
+            return parts.length == 2 && parts[1].length() > 10; // 최소 데이터 길이 확인
+        }
+        
+        return false;
     }
     
     /**
@@ -256,7 +305,7 @@ public class ImageService {
         try {
             // 캐시에서 먼저 확인
             String cachedUrl = imageCache.getIfPresent(imageUrl);
-            if (cachedUrl != null) {
+            if (cachedUrl != null && isValidImageUrl(cachedUrl)) {
                 return cachedUrl;
             }
             
@@ -285,9 +334,21 @@ public class ImageService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(resizedImage, "jpeg", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
             
+            // 빈 이미지 확인 (크기가 너무 작으면 오류로 간주)
+            if (imageBytes.length < 100) {
+                log.warn("이미지 데이터가 너무 작음: {}, 크기: {} 바이트", imageUrl, imageBytes.length);
+                return FALLBACK_IMAGE_URL;
+            }
+            
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
             String dataUrl = "data:image/jpeg;base64," + base64Image;
+            
+            // 변환된 URL 유효성 검사
+            if (!isValidImageUrl(dataUrl)) {
+                log.warn("생성된 Base64 이미지가 유효하지 않음: {}", imageUrl);
+                return FALLBACK_IMAGE_URL;
+            }
             
             // 캐시에 저장
             imageCache.put(imageUrl, dataUrl);
@@ -317,7 +378,7 @@ public class ImageService {
     }
     
     /**
-     * 이미지 리사이징 및 최적화
+     * 이미지 리사이징 및 최적화 개선
      */
     private String resizeAndOptimizeImage(String imageUrl) {
         try {
@@ -339,9 +400,23 @@ public class ImageService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(resizedImage, "jpeg", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
             
-            return "data:image/jpeg;base64," + base64Image;
+            // 빈 이미지 확인 (크기가 너무 작으면 오류로 간주)
+            if (imageBytes.length < 100) {
+                log.warn("생성된 이미지 데이터가 너무 작음: {}, 크기: {} 바이트", imageUrl, imageBytes.length);
+                return null;
+            }
+            
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            String dataUrl = "data:image/jpeg;base64," + base64Image;
+            
+            // 변환된 URL 유효성 검사
+            if (!isValidImageUrl(dataUrl)) {
+                log.warn("생성된 Base64 이미지가 유효하지 않음: {}", imageUrl);
+                return null;
+            }
+            
+            return dataUrl;
             
         } catch (Exception e) {
             log.error("이미지 리사이징 중 오류: {}", e.getMessage());

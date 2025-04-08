@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./newsForm.css";
 import { useNavigate } from "react-router-dom"; // 네비게이션 훅 추가
-import ImageLoader from "./ImageLoader.jsx"; // 이미지 로더 컴포넌트 가져오기
+import ImageLoader, { FALLBACK_IMAGE } from "./ImageLoader.jsx"; // FALLBACK_IMAGE 추가 임포트
 
 function NewsForm({ selectedDate }) {
   // 네비게이션 훅 사용
