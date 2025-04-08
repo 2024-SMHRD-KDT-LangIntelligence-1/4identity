@@ -63,7 +63,7 @@
 
 
 ## ⚙ 시스템 아키텍처(구조) 예시 
-![화면 캡처 2025-04-08 092529](https://github.com/user-attachments/assets/a0dbd62a-0c07-4605-a818-f44f4eb4b655)
+![화면 캡처 2025-04-08 151525](https://github.com/user-attachments/assets/1ff90cb7-9aa9-4948-847c-557c5d2927e9)
 
 ## 📌 SW유스케이스
 ![화면 캡처 2025-04-08 092826](https://github.com/user-attachments/assets/10aae677-f131-471e-bb26-c367a0fd4242)
@@ -112,10 +112,10 @@
     <td align="center"><b>PM</b></td>
   </tr>
   <tr>
-    <td align="center">1. 모델 학습용 뉴스 데이터 수집<br>2. DB 설계 및 구축</td>
-    <td align="center">1. </td>
-    <td align="center">1. </td>
-    <td align="center">1. </td>
+    <td align="left">- 모델 학습용 뉴스 데이터 수집<br>- DB 설계 및 구축</td>
+    <td align="left">- STS-GIT, DB 연결<br>- 사용자 정보 기능<br>- DB 연동 데이터 화면 출력 기능<br>- 상세 뉴스 페이지 기능 연결<br>- 이미지 아키텍처 개선</td>
+    <td align="left">- 분류 모델 제작 (IT, 카테고리)<br>- 모델 성능 평가<br>- 데이터 전처리</td>
+    <td align="left">- 기획서 및 관련 서류 작성<br>- 주간 및 일정 계획 작성<br>- 발표 및 PPT 제작</td>
   </tr>
   <tr>
     <td align="center"><b>Sub</b></td>
@@ -130,10 +130,10 @@
     <td align="center">Front-End</td>
   </tr>
   <tr>
-    <td align="center">1. 최신 뉴스 수집 및 API 서버 구현<br>2. 메인 서버, API 서버 연동<br>2. </td>
-    <td align="center">1. </td>
-    <td align="center">1. </td>
-    <td align="center">1. </td>
+    <td align="left">- 최신 뉴스 수집 및 API 서버 구현<br>- 메인 서버, API 서버 연동<br>- NCP 서버 구축 및 배포</td>
+    <td align="left">- 모델 기능 및 성능 평가 테스트</td>
+    <td align="left">- DB 설계 및 수정</td>
+    <td align="left">- 웹:모바일 반응형 전체화면 UI/UX 설계 및 구현</td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Kim-Seon-Bin" target='_blank'>github</a></td>
@@ -145,10 +145,12 @@
 
 ## 🤾‍♂️ 트러블슈팅
 
-* 문제1<br>
-    * 문제점 : 
-    * 해결방안 : 
- 
-* 문제2<br>
-    * 문제점 : 
-    * 해결방안 : 
+* 문제1 : 메인 페이지 이미지 로딩 문제<br>
+    * 기존 : DB에 저장된 URL을 가져와 화면에 보여주는 방식으로 진행
+    * 문제점 : 알맞은 이미지를 찾는데 많은 시간을 소요하고, 알맞은 이미지를 찾을 때까지 콘솔창에서 오류메시지를 출력
+    * 해결방안
+        * ImageService 도입하여 이미지 URL 유효성 검증 : 웹 서비스에서 이미지와 관련된 모든 처리를 전담하는 백엔드 서비스
+        * Caffeine 라이브러리를 이용하여 이미지 캐시 처리 : 데이터를 임시 저장하여 빠르게 응답하도록 돕는 Java용 메모리 캐시 라이브러리
+        * 이미지 리사이징 및 외적화
+        * CORS 우회용 프록시 서버 구현
+    
