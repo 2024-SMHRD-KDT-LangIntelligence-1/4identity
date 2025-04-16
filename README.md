@@ -26,7 +26,6 @@
             <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white"/> 
             <img src="https://img.shields.io/badge/SpringBoot-6ab04c?style=for-the-badge&logo=SpringBoot&logoColor=white"/>
             <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white"/> 
-            <img src="https://img.shields.io/badge/Apache Tomcat 9.0-D22128?style=for-the-badge&logo=Apache Tomcat&logoColor=white"/> 
         </td>
     </tr>
     <tr>
